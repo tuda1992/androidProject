@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Bonimed</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_products">Danh sách sản phẩm</string>
+    <string name="nav_item_cart">Giỏ hàng</string>
+    <string name="nav_item_orders">Danh sách đơn hàng</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_products</item>
+        <item>@string/nav_item_cart</item>
+        <item>@string/nav_item_orders</item>
+    </string-array>
+
+    <string name="title_products">Danh sách sản phẩm</string>
+    <string name="title_cart">Giỏ hàng</string>
+    <string name="title_orders">Danh sách đơn hàng</string>
+</resources>
