@@ -22,8 +22,8 @@ public class FastNetworking {
 
     private final String BASE_URL = "bonimed.vn/";
     private final String BASE_URL_TEST = "bonimed.com.vn/";
-    private final String URL_LOGIN = "";
-    private final String URL_PRODUCTS = "";
+    private final String URL_LOGIN = "Authenticate/Login";
+    private final String URL_PRODUCTS = "Products/ListProductsPaging";
     private final String URL_ORDERS = "";
 
     private Context mContext;

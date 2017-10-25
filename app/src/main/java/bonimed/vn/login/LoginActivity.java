@@ -22,6 +22,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void initListeners() {
+
+    }
+
+    @Override
     protected void initDatas(Bundle saveInstanceStatte) {
 
     }

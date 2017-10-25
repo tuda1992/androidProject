@@ -9,7 +9,6 @@ public class NavDrawerItem {
     private boolean showNotify;
     private String title;
 
-
     public NavDrawerItem() {
 
     }

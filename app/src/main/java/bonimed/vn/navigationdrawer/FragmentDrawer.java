@@ -33,11 +33,10 @@ public class FragmentDrawer extends BaseFragment {
     private FragmentDrawerListener drawerListener;
 
     public FragmentDrawer() {
-
     }
 
     public interface FragmentDrawerListener {
-        public void onDrawerItemSelected(View view, int position);
+        void onDrawerItemSelected(View view, int position);
     }
 
     public void setDrawerListener(FragmentDrawerListener listener) {
@@ -80,8 +79,10 @@ public class FragmentDrawer extends BaseFragment {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                drawerListener.onDrawerItemSelected(view, position);
-                mDrawerLayout.closeDrawer(containerView);
+                if (drawerListener != null) {
+                    drawerListener.onDrawerItemSelected(view, position);
+                    mDrawerLayout.closeDrawer(containerView);
+                }
             }
 
             @Override

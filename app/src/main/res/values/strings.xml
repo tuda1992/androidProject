@@ -17,4 +17,6 @@
     <string name="title_products">Danh sách sản phẩm</string>
     <string name="title_cart">Giỏ hàng</string>
     <string name="title_orders">Danh sách đơn hàng</string>
+
+    <string name="input_text_hint">Nhập tên sản phẩm bạn muốn tìm</string>
 </resources>

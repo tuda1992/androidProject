@@ -3,6 +3,7 @@ package bonimed.vn.cart;
 import android.os.Bundle;
 import android.view.View;
 
+import bonimed.vn.R;
 import bonimed.vn.base.BaseFragment;
 
 /**
@@ -12,11 +13,16 @@ import bonimed.vn.base.BaseFragment;
 public class CartFragment extends BaseFragment {
     @Override
     protected int getLayoutView() {
-        return 0;
+        return R.layout.fragment_cart;
     }
 
     @Override
     protected void initViews(View view) {
+
+    }
+
+    @Override
+    protected void initListeners() {
 
     }
 

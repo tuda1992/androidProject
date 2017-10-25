@@ -2,7 +2,13 @@ package bonimed.vn.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+
+import bonimed.vn.R;
 
 /**
  * Created by mac on 10/24/17.
@@ -15,6 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutView());
         initViews();
+        initListeners();
         initDatas(savedInstanceState);
     }
 
@@ -23,5 +30,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void initViews();
     protected abstract void initListeners();
     protected abstract void initDatas(Bundle saveInstanceStatte);
+
+    protected void startFragment(Fragment fragment,String tag){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container_body, fragment);
+        fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.commit();
+    }
 
 }
