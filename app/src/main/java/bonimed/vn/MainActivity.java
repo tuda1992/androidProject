@@ -5,6 +5,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import bonimed.vn.base.BaseActivity;
@@ -19,6 +21,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     private Toolbar mToolbar;
     private FragmentDrawer mDrawerFragment;
     private int mCurrentTab = -1;
+    private Menu mMenu;
 
     @Override
     protected int getLayoutView() {
@@ -46,6 +49,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
 
     @Override
     protected void initDatas(Bundle saveInstanceStatte) {
+
     }
 
     @Override
@@ -63,16 +67,19 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         String title = getString(R.string.app_name);
         switch (position) {
             case 0:
+                setVisibleActionSearch(true);
                 fragment = new ProductsFragment();
                 nameFragment = Constants.PRODUCTS_FRAGMENT;
                 title = getString(R.string.title_products);
                 break;
             case 1:
+                setVisibleActionSearch(false);
                 fragment = new CartFragment();
                 nameFragment = Constants.CART_FRAGMENT;
                 title = getString(R.string.title_cart);
                 break;
             case 2:
+                setVisibleActionSearch(false);
                 fragment = new OrdersFragment();
                 nameFragment = Constants.ORDERS_FRAGMENT;
                 title = getString(R.string.title_orders);
@@ -88,4 +95,46 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         }
     }
 
+    private void setVisibleActionSearch(boolean isShow) {
+        if (mMenu != null) {
+            MenuItem actionCart = mMenu.findItem(R.id.action_cart);
+            actionCart.setVisible(isShow);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        this.mMenu = menu;
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (mCurrentTab == 0) {
+            setVisibleActionSearch(true);
+        } else {
+            setVisibleActionSearch(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_cart) {
+            displayView(1);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

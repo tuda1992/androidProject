@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
     private SearchCallBackListener mSearchCallBackListener;
     private AutoCompleteAdapter mAutoCompleteAdapter;
     private Context mContext;
+    private ImageView mIvSearch;
 
     @Override
     public void onClick(View view) {
@@ -62,6 +64,7 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
     protected void initCompoundView() {
         mEdtInput = (AutoCompleteTextView) findViewById(R.id.edt_input);
         mRlSearch = (RelativeLayout) findViewById(R.id.rl_search);
+        mIvSearch = (ImageView) findViewById(R.id.iv_search);
     }
 
     @Override
@@ -77,5 +80,9 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
     @Override
     protected void initListener() {
         mRlSearch.setOnClickListener(this);
+    }
+
+    public void setResourceForBtnSearch() {
+        mIvSearch.setImageResource(R.drawable.ic_cart);
     }
 }

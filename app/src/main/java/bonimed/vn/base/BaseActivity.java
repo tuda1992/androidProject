@@ -39,4 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    protected void finishFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack();
+    }
+
 }

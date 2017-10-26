@@ -1,6 +1,8 @@
 package bonimed.vn.api;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -10,6 +12,8 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import bonimed.vn.listener.JsonArrayCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
@@ -30,74 +34,45 @@ public class FastNetworking {
     private JsonObjectCallBackListener mListenerObject;
     private JsonArrayCallBackListener mListenerArray;
 
-    public FastNetworking(Context context, JsonObjectCallBackListener listenerObject){
+    public FastNetworking(Context context, JsonObjectCallBackListener listenerObject) {
         this.mContext = context;
         this.mListenerObject = listenerObject;
     }
 
-    public FastNetworking(Context context, JsonArrayCallBackListener listenerArray){
+    public FastNetworking(Context context, JsonArrayCallBackListener listenerArray) {
         this.mContext = context;
         this.mListenerArray = listenerArray;
     }
 
-    public void callApiMethodGetReturnJsonObject(){
-        AndroidNetworking.get("")
-                .addPathParameter("pageNumber", "0")
-                .addQueryParameter("limit", "3")
-                .addHeaders("token", "1234")
+    public void callApiLogin(JSONObject jsonObject) {
+        HashMap<String, String> headers = initCustomHeader("");
+        AndroidNetworking.post(BASE_URL_TEST + URL_LOGIN)
+                .addHeaders(headers)
+               .addJSONObjectBody(jsonObject)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        if (mListenerObject != null)
+                            mListenerObject.onResponse(response);
                     }
+
                     @Override
                     public void onError(ANError error) {
+                        if (mListenerObject != null)
+                            mListenerObject.onError(error.getErrorBody().toString());
                     }
                 });
     }
 
-    public void callApiMethodGetReturnJsonArray(){
-        AndroidNetworking.get("")
-                .addPathParameter("pageNumber", "0")
-                .addQueryParameter("limit", "3")
-                .addHeaders("token", "1234")
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                    }
-                });
+    @NonNull
+    private HashMap<String, String> initCustomHeader(String token) {
+        HashMap<String, String> headers = new HashMap<>();
+//        if (!TextUtils.isEmpty(token))
+//            headers.put("Authorization", "Bearer " + token);
+        headers.put("Accept", "application/json");
+        return headers;
     }
 
-    public void callApiMethodPostReturnJsonObject(JSONObject jsonObject){
-        AndroidNetworking.post("")
-                .addJSONObjectBody(jsonObject)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                    }
-                });
-    }
-
-    public void callApiMethodPostReturnJsonArray(JSONObject jsonObject){
-        AndroidNetworking.post("")
-                .addJSONObjectBody(jsonObject)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                    }
-                });
-    }
 
 }

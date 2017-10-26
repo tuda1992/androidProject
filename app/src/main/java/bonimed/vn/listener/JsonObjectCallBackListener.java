@@ -1,6 +1,7 @@
 package bonimed.vn.listener;
 
-import com.google.gson.JsonArray;
+
+import org.json.JSONObject;
 
 /**
  * Created by mac on 10/24/17.
@@ -8,7 +9,8 @@ import com.google.gson.JsonArray;
 
 public interface JsonObjectCallBackListener {
 
-    void onResponse(JsonArray jsonArray);
+    void onResponse(JSONObject jsonObject);
+
     void onError(String messageError);
 
 }

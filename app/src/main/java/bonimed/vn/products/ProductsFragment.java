@@ -30,4 +30,10 @@ public class ProductsFragment extends BaseFragment {
     protected void initDatas(Bundle savedInstanceState) {
 
     }
+
+    @Override
+    public void onBackPressFragment() {
+        super.onBackPressFragment();
+        getActivity().finish();
+    }
 }
