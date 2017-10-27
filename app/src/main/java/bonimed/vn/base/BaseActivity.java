@@ -1,5 +1,6 @@
 package bonimed.vn.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,10 +29,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract int getLayoutView();
 
     protected abstract void initViews();
+
     protected abstract void initListeners();
+
     protected abstract void initDatas(Bundle saveInstanceStatte);
 
-    protected void startFragment(Fragment fragment,String tag){
+    protected void startFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container_body, fragment);
@@ -42,6 +45,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void finishFragment() {
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStack();
+    }
+
+    protected void startActivityAnim(Class activity, Bundle b) {
+        Intent i = new Intent(this, activity);
+        if (b != null) {
+            i.putExtras(b);
+        }
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
+
+    protected void finishActivityAnim() {
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
 }

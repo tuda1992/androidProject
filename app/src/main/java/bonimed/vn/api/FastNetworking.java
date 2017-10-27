@@ -1,6 +1,7 @@
 package bonimed.vn.api;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -11,6 +12,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -24,11 +26,12 @@ import bonimed.vn.listener.JsonObjectCallBackListener;
 
 public class FastNetworking {
 
-    private final String BASE_URL = "bonimed.vn/";
-    private final String BASE_URL_TEST = "bonimed.com.vn/";
+    private final String BASE_URL = "https://bonimed.vn/api/";
+    private final String BASE_URL_TEST = "https://bonimed.com.vn/api/";
     private final String URL_LOGIN = "Authenticate/Login";
     private final String URL_PRODUCTS = "Products/ListProductsPaging";
-    private final String URL_ORDERS = "";
+    private final String URL_ORDERS = "Orders/ListAll";
+    private final String URL_ORDERS_CREATE = "Orders/Create";
 
     private Context mContext;
     private JsonObjectCallBackListener mListenerObject;
@@ -45,10 +48,17 @@ public class FastNetworking {
     }
 
     public void callApiLogin(JSONObject jsonObject) {
+        try {
+            jsonObject.put("VersionApp", mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         HashMap<String, String> headers = initCustomHeader("");
-        AndroidNetworking.post(BASE_URL_TEST + URL_LOGIN)
+        AndroidNetworking.post(BASE_URL + URL_LOGIN)
                 .addHeaders(headers)
-               .addJSONObjectBody(jsonObject)
+                .addJSONObjectBody(jsonObject)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -68,9 +78,8 @@ public class FastNetworking {
     @NonNull
     private HashMap<String, String> initCustomHeader(String token) {
         HashMap<String, String> headers = new HashMap<>();
-//        if (!TextUtils.isEmpty(token))
-//            headers.put("Authorization", "Bearer " + token);
         headers.put("Accept", "application/json");
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
         return headers;
     }
 

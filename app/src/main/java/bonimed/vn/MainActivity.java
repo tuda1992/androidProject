@@ -5,16 +5,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.gson.Gson;
+
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.cart.CartFragment;
+import bonimed.vn.login.UserLogin;
 import bonimed.vn.navigationdrawer.FragmentDrawer;
 import bonimed.vn.orders.OrdersFragment;
 import bonimed.vn.products.ProductsFragment;
 import bonimed.vn.util.Constants;
+import bonimed.vn.util.PrefManager;
 
 public class MainActivity extends BaseActivity implements FragmentDrawer.FragmentDrawerListener {
 
@@ -22,6 +27,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     private FragmentDrawer mDrawerFragment;
     private int mCurrentTab = -1;
     private Menu mMenu;
+    private UserLogin mUserLogin;
 
     @Override
     protected int getLayoutView() {
@@ -49,7 +55,12 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
 
     @Override
     protected void initDatas(Bundle saveInstanceStatte) {
-
+        String jsonUserLogin = PrefManager.getJsonObjectUserLogin(this);
+        if (!TextUtils.isEmpty(jsonUserLogin)) {
+            Gson gson = new Gson();
+            mUserLogin = gson.fromJson(jsonUserLogin, UserLogin.class);
+            mDrawerFragment.setNameUser(mUserLogin.fullName);
+        }
     }
 
     @Override

@@ -9,16 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/rl_bottom"
-        android:layout_below="@+id/search_layout"
-        android:layout_marginTop="@dimen/_5sdp">
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
     <LinearLayout
         android:id="@+id/ll_info"
         android:layout_width="match_parent"
@@ -35,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -54,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:id="@+id/tv_product_money"
@@ -80,7 +70,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -99,7 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:id="@+id/tv_service_money"
@@ -125,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -144,7 +134,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/border_edittext">
+                android:background="@drawable/border_black">
 
                 <TextView
                     android:id="@+id/tv_total_money"
@@ -251,9 +241,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_info"
-        android:layout_below="@+id/search_layout"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_5sdp">
+        android:layout_below="@+id/search_layout">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_data"
@@ -262,7 +250,5 @@
             android:clipToPadding="false"
             android:scrollbars="none" />
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 
 </RelativeLayout>

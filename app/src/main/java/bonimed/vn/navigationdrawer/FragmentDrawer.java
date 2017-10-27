@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class FragmentDrawer extends BaseFragment {
     private View containerView;
     private static String[] titles = null;
     private FragmentDrawerListener drawerListener;
+    private TextView mTvNameUser;
 
     public FragmentDrawer() {
     }
@@ -68,10 +70,15 @@ public class FragmentDrawer extends BaseFragment {
 
     @Override
     protected void initViews(View view) {
+        mTvNameUser = (TextView) view.findViewById(R.id.tv_name_customer);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_drawer);
         adapter = new NavigationDrawerAdapter(getActivity(), getData());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    public void setNameUser(String name) {
+        mTvNameUser.setText(name);
     }
 
     @Override

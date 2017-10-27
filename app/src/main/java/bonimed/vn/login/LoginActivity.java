@@ -16,11 +16,13 @@ import com.google.gson.JsonArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bonimed.vn.MainActivity;
 import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.util.Constants;
+import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.Utils;
 
 /**
@@ -47,15 +49,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void initListeners() {
         mBtnSignIn.setOnClickListener(this);
-//        mEdtUsername.addTextChangedListener(new MyTextWatcher(mEdtUsername));
-//        mEdtPassword.addTextChangedListener(new MyTextWatcher(mEdtPassword));
         mEdtUsername.setOnFocusChangeListener(new MyOnFocusChangeListener());
         mEdtPassword.setOnFocusChangeListener(new MyOnFocusChangeListener());
     }
 
     @Override
     protected void initDatas(Bundle saveInstanceStatte) {
-
+        if (!TextUtils.isEmpty(PrefManager.getJsonObjectUserLogin(LoginActivity.this))) {
+            startActivityAnim(MainActivity.class, null);
+            finish();
+            return;
+        }
     }
 
     @Override
@@ -72,23 +76,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void callApiLogin(String username, String password) {
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
         UserLogin userLogin = new UserLogin();
         userLogin.userName = username;
         userLogin.password = password;
-        userLogin.versionApp = Constants.VERSION_APP;
-        String json = gson.toJson(userLogin);
+        final String json = gson.toJson(userLogin);
         try {
             JSONObject jsonObject = new JSONObject(json);
             FastNetworking fastNetworking = new FastNetworking(this, new JsonObjectCallBackListener() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
-                    Log.d("TUDA", "json = " + jsonObject);
+                    UserLogin userLoginSuccess = gson.fromJson(jsonObject.toString(), UserLogin.class);
+                    Log.d("TUDA", "user = " + userLoginSuccess);
+                    if (userLoginSuccess.securityToken != null) {
+                        PrefManager.putJsonObjectUserLogin(LoginActivity.this, jsonObject.toString());
+                        startActivityAnim(MainActivity.class, null);
+                        finish();
+                    } else {
+
+                    }
                 }
 
                 @Override
                 public void onError(String messageError) {
-                    Log.d("TUDA", "error = " + messageError);
                 }
             });
             fastNetworking.callApiLogin(jsonObject);

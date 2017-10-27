@@ -14,7 +14,7 @@ import bonimed.vn.widget.SearchLayout;
  * Created by mac on 10/24/17.
  */
 
-public class OrdersFragment extends BaseFragment implements SearchLayout.SearchCallBackListener {
+public class OrdersFragment extends BaseFragment implements SearchLayout.SearchCallBackListener{
 
     private SearchLayout mSearchLayout;
     private SwipeRefreshLayout mSwipe;
@@ -42,11 +42,6 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
 
     }
 
-    @Override
-    public void onBackPressFragment() {
-        super.onBackPressFragment();
-        finishFragment();
-    }
 
     @Override
     public void OnActionSearch(String input) {

@@ -14,7 +14,6 @@ public class Constants {
     public static final String PREF_NAME = "PREF_BONIMED";
     public static final String USER_LOGIN = "USER_LOGIN";
 
-    public static final String VERSION_APP = "2.0.6.0";
 
 
 }
