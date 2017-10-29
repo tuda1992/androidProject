@@ -1,5 +1,8 @@
 package bonimed.vn.login;
 
+import android.content.Intent;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -33,6 +37,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private EditText mEdtUsername, mEdtPassword;
     private Button mBtnSignIn;
+    private TextView mTvLicenseUrl;
 
     @Override
     protected int getLayoutView() {
@@ -44,11 +49,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mEdtUsername = (EditText) findViewById(R.id.edt_username);
         mEdtPassword = (EditText) findViewById(R.id.edt_password);
         mBtnSignIn = (Button) findViewById(R.id.btn_login);
+        mTvLicenseUrl = (TextView) findViewById(R.id.tv_license_url);
+        mTvLicenseUrl.setPaintFlags(mTvLicenseUrl.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
     @Override
     protected void initListeners() {
         mBtnSignIn.setOnClickListener(this);
+        mTvLicenseUrl.setOnClickListener(this);
         mEdtUsername.setOnFocusChangeListener(new MyOnFocusChangeListener());
         mEdtPassword.setOnFocusChangeListener(new MyOnFocusChangeListener());
     }
@@ -70,6 +78,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     return;
                 }
                 callApiLogin(mEdtUsername.getText().toString(), mEdtPassword.getText().toString());
+                break;
+            case R.id.tv_license_url:
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(Constants.URL_BONIMED));
+                startActivity(i);
                 break;
         }
 

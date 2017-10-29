@@ -23,6 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_5sdp"
         android:includeFontPadding="false"
+        android:autoLink="web"
         android:text="@string/hot_line"
         android:textColor="@android:color/white"
         android:textSize="@dimen/_15sdp"
@@ -94,6 +95,21 @@
 
 
     <TextView
+        android:id="@+id/tv_license_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_license"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:text="@string/license_url"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/_10sdp"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/tv_license"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

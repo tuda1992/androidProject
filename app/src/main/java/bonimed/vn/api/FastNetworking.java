@@ -2,11 +2,15 @@ package bonimed.vn.api;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interceptors.GzipRequestInterceptor;
+import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.JsonObject;
@@ -15,10 +19,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import bonimed.vn.listener.JsonArrayCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
+import bonimed.vn.util.Constants;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by mac on 10/24/17.
@@ -75,6 +86,29 @@ public class FastNetworking {
                 });
     }
 
+    public void callApiProducts(JSONObject jsonObject, String token) {
+        HashMap<String, String> headers = initCustomContentType();
+        AndroidNetworking.post(BASE_URL + URL_PRODUCTS)
+                .addHeaders(headers)
+                .addStringBody("application/json")
+                .addQueryParameter(Constants.SECURITY_TOKEN, token)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (mListenerObject != null)
+                            mListenerObject.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        if (mListenerObject != null)
+                            mListenerObject.onError(error.getErrorBody().toString());
+                    }
+                });
+    }
+
     @NonNull
     private HashMap<String, String> initCustomHeader(String token) {
         HashMap<String, String> headers = new HashMap<>();
@@ -83,5 +117,12 @@ public class FastNetworking {
         return headers;
     }
 
+    @NonNull
+    private HashMap<String, String> initCustomContentType() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-Type", "application/json");
+        return headers;
+    }
 
 }

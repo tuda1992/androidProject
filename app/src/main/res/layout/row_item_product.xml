@@ -78,10 +78,13 @@
         <TextView
             android:id="@+id/tv_detail"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
             android:text="@string/detal_bill"
-            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:background="@color/colorAccent"
+            android:textColor="@android:color/white"
+            android:padding="@dimen/_3sdp"
             android:textSize="@dimen/_10sdp" />
 
     </RelativeLayout>
@@ -92,12 +95,13 @@
         android:layout_height="match_parent"
         android:layout_weight="0.7">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
-            android:text="@string/purchase"
-            android:textColor="@android:color/black"
+            android:src="@drawable/ic_cart"
+            android:padding="@dimen/_5sdp"
+            android:background="@color/colorAccent"
             android:textSize="@dimen/_10sdp" />
 
     </RelativeLayout>

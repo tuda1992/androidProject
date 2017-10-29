@@ -22,7 +22,9 @@
 
     <string name="hot_line">Hotline : 0973 446 447</string>
     <string name="welcome">Welcome</string>
-    <string name="license">BẢN QUYỀN THUỘC QUYỀN SỞ HỮU CỦA LƯU TIẾN SỨC </string>
+
+    <string name="license_url">Bonimed.vn</string>
+    <string name="license">BẢN QUYỀN THUỘC SỞ HỮU CỦA LƯU TIẾN SỨC </string>
 
     <string name="hint_username">Tên tài khoản</string>
     <string name="hint_password">Mật khẩu</string>
@@ -43,6 +45,7 @@
     <string name="detal_bill">Chi tiết</string>
     <string name="purchase">Mua</string>
 
-
+    <string name="error_connection">Bạn đang không truy cập Internet</string>
+    <string name="error_connection_message">Hãy truy cập Internet rồi thử lại nhé</string>
 
 </resources>

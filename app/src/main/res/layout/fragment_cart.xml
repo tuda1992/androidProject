@@ -166,7 +166,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/effect_button">
+            android:background="@drawable/effect_button_blue">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -195,17 +195,12 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/white" />
-
         <RelativeLayout
             android:id="@+id/rl_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/effect_button">
+            android:background="@drawable/effect_button_red">
 
             <RelativeLayout
                 android:layout_width="wrap_content"

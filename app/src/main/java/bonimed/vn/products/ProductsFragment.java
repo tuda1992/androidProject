@@ -7,11 +7,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import bonimed.vn.MainActivity;
 import bonimed.vn.R;
+import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseFragment;
+import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
 
@@ -77,8 +85,39 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
         mProductsAdapter = new ProductsAdapter(getActivity(), mListData, this);
         mRv.setAdapter(mProductsAdapter);
+
+        callApiProducts();
     }
 
+    private void callApiProducts(){
+        Gson gson = new Gson();
+        Products products = new Products();
+        products.pageIndex = 1;
+        products.isSpecial = false;
+        products.pageSize = 25;
+        products.productStatus = 1;
+        products.productType = 2;
+        products.searchText = "";
+        String json = gson.toJson(products);
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+
+            FastNetworking fastNetworking = new FastNetworking(getActivity(), new JsonObjectCallBackListener() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+
+                }
+
+                @Override
+                public void onError(String messageError) {
+
+                }
+            });
+            fastNetworking.callApiProducts(jsonObject,((MainActivity)getActivity()).getSecurityToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onClickPurchase(String item) {

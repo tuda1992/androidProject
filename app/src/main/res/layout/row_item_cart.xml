@@ -110,13 +110,14 @@
         android:id="@+id/rl_cancel"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/_10sdp"
         android:layout_weight="0.3">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_20sdp"
             android:layout_centerInParent="true"
-            android:background="@color/colorAccent"
+            android:background="@android:color/holo_red_light"
             android:src="@drawable/ic_cancel" />
 
     </RelativeLayout>

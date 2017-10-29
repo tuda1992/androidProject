@@ -63,6 +63,10 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         }
     }
 
+    public String getSecurityToken(){
+        return mUserLogin == null ? "" : mUserLogin.securityToken;
+    }
+
     @Override
     public void onDrawerItemSelected(View view, int position) {
         displayView(position);
