@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -20,6 +22,7 @@ import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseFragment;
 import bonimed.vn.listener.JsonObjectCallBackListener;
+import bonimed.vn.util.PrefManager;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
 
@@ -27,7 +30,7 @@ import bonimed.vn.widget.SearchLayout;
  * Created by mac on 10/24/17.
  */
 
-public class ProductsFragment extends BaseFragment implements ProductsAdapter.ItemClickCallBackListener {
+public class ProductsFragment extends BaseFragment implements ProductsAdapter.ItemClickCallBackListener, SearchLayout.SearchCallBackListener {
 
     private SearchLayout mSearchLayout;
     private SwipeRefreshLayout mSwipe;
@@ -36,8 +39,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private ProductsAdapter mProductsAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private EndlessRecyclerViewScrollListener mScrollListener;
-    private List<String> mListData;
-    private int mCurrentPage;
+    private List<DataProduct> mListData = new ArrayList<>();
+    private List<OrderDataProduct> mListOrder = new ArrayList<>();
+    private int mCurrentPage = 1;
+    private int mTotalProduct;
+    private String mSearch = "";
+    private boolean mIsExist;
 
     @Override
     protected int getLayoutView() {
@@ -58,7 +65,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mScrollListener = new EndlessRecyclerViewScrollListener(mLinearLayoutManager) {
             @Override
             public void onLoadMore(int page) {
-
+                callApiProducts();
             }
         };
 
@@ -68,64 +75,119 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             @Override
             public void onRefresh() {
                 mScrollListener.resetState();
-                mSwipe.setRefreshing(false);
+                mCurrentPage = 1;
+                mSearch = "";
+                mListData.clear();
+                callApiProducts();
+
             }
         });
+        mSearchLayout.setListener(this);
     }
 
     @Override
     protected void initDatas(Bundle savedInstanceState) {
         mRv.setHasFixedSize(true);
         mRv.setLayoutManager(mLinearLayoutManager);
-        mListData = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            mListData.add("" + i);
-        }
 
         mProductsAdapter = new ProductsAdapter(getActivity(), mListData, this);
         mRv.setAdapter(mProductsAdapter);
-
+//        mSearchLayout.setDataForAutoComplete(mListData);
         callApiProducts();
     }
 
-    private void callApiProducts(){
-        Gson gson = new Gson();
+    private void callApiProducts() {
+        final Gson gson = new Gson();
         Products products = new Products();
-        products.pageIndex = 1;
-        products.isSpecial = false;
+        products.pageIndex = mCurrentPage;
         products.pageSize = 25;
+        products.isSpecial = false;
         products.productStatus = 1;
         products.productType = 2;
-        products.searchText = "";
-        String json = gson.toJson(products);
+        products.searchText = mSearch;
+        final String json = gson.toJson(products);
         try {
             JSONObject jsonObject = new JSONObject(json);
 
             FastNetworking fastNetworking = new FastNetworking(getActivity(), new JsonObjectCallBackListener() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
+                    mSwipe.setRefreshing(false);
+                    ResultProduct resultProduct = gson.fromJson(jsonObject.toString(), ResultProduct.class);
+                    mTvTotal.setText(getString(R.string.text_total) + " " + resultProduct.pagination.rowCount + " sản phẩm");
 
+                    if (resultProduct.data != null && resultProduct.data.size() > 0) {
+                        if (mCurrentPage <= resultProduct.pagination.pageCount) {
+                            mCurrentPage++;
+                            mListData.addAll(resultProduct.data);
+                            mProductsAdapter.notifyDataSetChanged();
+                            mSearchLayout.setDataForAutoComplete(mListData);
+                        }
+                    }
                 }
 
                 @Override
                 public void onError(String messageError) {
-
+                    mSwipe.setRefreshing(false);
                 }
             });
-            fastNetworking.callApiProducts(jsonObject,((MainActivity)getActivity()).getSecurityToken());
+            fastNetworking.callApiProducts(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onClickPurchase(String item) {
+    public void onClickPurchase(DataProduct item) {
+        Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
+        OrderDataProduct itemData = null;
+        if (mListOrder.size() > 0) {
+            for (int i = 0; i < mListOrder.size(); i++) {
+                if (item.id.equalsIgnoreCase(mListOrder.get(i).dataProduct.id)) {
+                    mListOrder.get(i).orderQuantity++;
+                    mIsExist = true;
+                    break;
+                } else {
+                    mIsExist = false;
+                }
+            }
+        } else {
+            mIsExist = true;
+            itemData = new OrderDataProduct();
+            itemData.orderQuantity = 1;
+            itemData.dataProduct = item;
+            mListOrder.add(itemData);
+        }
+        if (!mIsExist) {
+            itemData = new OrderDataProduct();
+            itemData.orderQuantity = 1;
+            itemData.dataProduct = item;
+            mListOrder.add(itemData);
+        }
+        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
+        listOrderDataProduct.orderList = mListOrder;
+        Gson gson = new Gson();
+        String orderList = gson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
+        PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
+    }
+
+    @Override
+    public void onClickDetail(DataProduct item) {
 
     }
 
     @Override
-    public void onClickDetail(String item) {
+    public void OnActionSearch(String input) {
+        mSearch = input;
+        mListData.clear();
+        mCurrentPage = 1;
+        callApiProducts();
+    }
 
+    @Override
+    public void OnTextChanged(CharSequence charSequence) {
+        mSearch = charSequence.toString();
+        mCurrentPage = 1;
+        callApiProducts();
     }
 }

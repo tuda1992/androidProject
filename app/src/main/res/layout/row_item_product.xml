@@ -11,6 +11,7 @@
         android:layout_weight="1">
 
         <ImageView
+            android:id="@+id/iv_product"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_centerInParent="true"
@@ -33,21 +34,21 @@
                 android:id="@+id/tv_product_name"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.2"
                 android:gravity="center_vertical"
                 android:text="10000"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
             <TextView
-                android:id="@+id/tv_unit_count"
+                android:id="@+id/tv_product_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:gravity="center_vertical"
                 android:text="10000"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
         </LinearLayout>
 
@@ -59,13 +60,14 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/tv_money"
+            android:id="@+id/tv_product_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:singleLine="true"
             android:text="10000"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/_10sdp" />
+            android:textSize="@dimen/_9sdp" />
 
     </RelativeLayout>
 
@@ -80,11 +82,11 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
-            android:text="@string/detal_bill"
-            android:gravity="center"
             android:background="@color/colorAccent"
-            android:textColor="@android:color/white"
+            android:gravity="center"
             android:padding="@dimen/_3sdp"
+            android:text="@string/detal_bill"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/_10sdp" />
 
     </RelativeLayout>
@@ -99,9 +101,9 @@
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_cart"
-            android:padding="@dimen/_5sdp"
             android:background="@color/colorAccent"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_cart"
             android:textSize="@dimen/_10sdp" />
 
     </RelativeLayout>

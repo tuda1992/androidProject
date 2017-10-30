@@ -15,6 +15,8 @@ public class Constants {
     // Shared preferences file name
     public static final String PREF_NAME = "PREF_BONIMED";
     public static final String USER_LOGIN = "USER_LOGIN";
+    public static final String ORDER_PRODUCT = "ORDER_PRODUCT";
+
 
     public static final String SECURITY_TOKEN = "securitytoken";
 

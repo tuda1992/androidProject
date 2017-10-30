@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bonimed.vn.R;
+import bonimed.vn.products.DataProduct;
 
 /**
  * Created by acv on 10/25/17.
@@ -23,11 +24,11 @@ import bonimed.vn.R;
 public class AutoCompleteAdapter extends ArrayAdapter<String> {
 
     private Context mContext;
-    private List<String> mListData, mListSuggestion, mListTemple;
+    private List<DataProduct> mListData, mListSuggestion, mListTemple;
     private int mViewResourceId;
 
-    public AutoCompleteAdapter(Context context, List<String> listData) {
-        super(context, R.layout.row_item_autocomplete, listData);
+    public AutoCompleteAdapter(Context context, List<DataProduct> listData) {
+        super(context, R.layout.row_item_autocomplete);
         this.mContext = context;
         this.mListData = listData;
         this.mViewResourceId = R.layout.row_item_autocomplete;
@@ -42,7 +43,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(mViewResourceId, null);
         }
-        String product = mListData.get(position);
+        String product = mListData.get(position).productName;
         if (product != null) {
             TextView tvProductName = (TextView) v.findViewById(R.id.tv_product_name);
             if (tvProductName != null) {
@@ -66,29 +67,26 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
             if (constraint != null) {
                 mListSuggestion.clear();
-                for (String product : mListTemple) {
-                    if (product.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                for (DataProduct product : mListTemple) {
+                    if (product.productName.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
                         mListSuggestion.add(product);
                     }
                 }
-                FilterResults filterResults = new FilterResults();
                 filterResults.values = mListSuggestion;
                 filterResults.count = mListSuggestion.size();
-                return filterResults;
-            } else {
-                return new FilterResults();
             }
+            return filterResults;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            ArrayList<String> filteredList = (ArrayList<String>) results.values;
+            ArrayList<DataProduct> filteredList = (ArrayList<DataProduct>) results.values;
             if (results != null && results.count > 0) {
-                clear();
-                for (String c : filteredList) {
-                    add(c);
+                for (DataProduct c : filteredList) {
+                    add(c.productName);
                 }
                 notifyDataSetChanged();
             }

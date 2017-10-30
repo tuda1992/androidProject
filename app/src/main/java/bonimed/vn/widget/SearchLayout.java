@@ -1,6 +1,8 @@
 package bonimed.vn.widget;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -11,7 +13,10 @@ import java.util.List;
 
 import bonimed.vn.R;
 import bonimed.vn.adapter.AutoCompleteAdapter;
+import bonimed.vn.adapter.SearchAutoCompleteData;
 import bonimed.vn.base.BaseCustomLayout;
+import bonimed.vn.products.DataProduct;
+import bonimed.vn.products.Products;
 
 /**
  * Created by acv on 10/25/17.
@@ -22,7 +27,7 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
     private AutoCompleteTextView mEdtInput;
     private RelativeLayout mRlSearch;
     private SearchCallBackListener mSearchCallBackListener;
-    private AutoCompleteAdapter mAutoCompleteAdapter;
+    private SearchAutoCompleteData mAutoCompleteAdapter;
     private Context mContext;
     private ImageView mIvSearch;
 
@@ -39,6 +44,7 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
 
     public interface SearchCallBackListener {
         void OnActionSearch(String input);
+        void OnTextChanged(CharSequence charSequence);
     }
 
     public void setListener(SearchCallBackListener searchCallBackListener) {
@@ -72,14 +78,36 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
         mEdtInput.setThreshold(2);
     }
 
-    public void setDataForAutoComplete(List<String> listData) {
-        mAutoCompleteAdapter = new AutoCompleteAdapter(mContext, listData);
+    public void setDataForAutoComplete(List<DataProduct> listData) {
+        mAutoCompleteAdapter = new SearchAutoCompleteData(mContext, listData);
         mEdtInput.setAdapter(mAutoCompleteAdapter);
+    }
+
+    public void notifiDataSetChanged(){
+        mAutoCompleteAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void initListener() {
         mRlSearch.setOnClickListener(this);
+        mEdtInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (mSearchCallBackListener != null){
+                    mSearchCallBackListener.OnTextChanged(charSequence);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     public void setResourceForBtnSearch() {

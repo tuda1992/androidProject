@@ -48,4 +48,6 @@
     <string name="error_connection">Bạn đang không truy cập Internet</string>
     <string name="error_connection_message">Hãy truy cập Internet rồi thử lại nhé</string>
 
+    <string name="toast_order_product">Sản phẩm này đã được thêm vào giỏ hàng</string>
+
 </resources>

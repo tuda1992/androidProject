@@ -9,9 +9,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import bonimed.vn.R;
+import bonimed.vn.util.Constants;
+import bonimed.vn.util.Utils;
 
 /**
  * Created by acv on 10/27/17.
@@ -21,16 +25,16 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
-    private List<String> mResultData;
+    private List<DataProduct> mResultData;
 
     public interface ItemClickCallBackListener {
-        void onClickPurchase(String item);
+        void onClickPurchase(DataProduct item);
 
-        void onClickDetail(String item);
+        void onClickDetail(DataProduct item);
     }
 
 
-    public ProductsAdapter(Context context, List<String> resultData, ItemClickCallBackListener listener) {
+    public ProductsAdapter(Context context, List<DataProduct> resultData, ItemClickCallBackListener listener) {
         this.mContext = context;
         this.mItemClickCallBackListener = listener;
         this.mResultData = resultData;
@@ -61,8 +65,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
         }
 
-        public void setData(String item) {
-            mTvProductName.setText(item);
+        public void setData(DataProduct item) {
+            mTvProductName.setText(item.productName);
+            mTvProductUnit.setText(item.description);
+            mTvProductMoney.setText(Utils.convertToCurrencyStr(item.salePrice.intValue()));
+            Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.mipmap.ic_launcher).into(mIvProduct);
         }
 
         @Override
@@ -70,12 +77,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             switch (view.getId()) {
                 case R.id.rl_purchase:
                     if (mItemClickCallBackListener != null) {
-                        mItemClickCallBackListener.onClickPurchase("");
+                        mItemClickCallBackListener.onClickPurchase(mResultData.get(getAdapterPosition()));
                     }
                     break;
                 case R.id.rl_detail:
                     if (mItemClickCallBackListener != null) {
-                        mItemClickCallBackListener.onClickDetail("");
+                        mItemClickCallBackListener.onClickDetail(mResultData.get(getAdapterPosition()));
                     }
                     break;
             }

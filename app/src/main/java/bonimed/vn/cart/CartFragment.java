@@ -95,6 +95,11 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     }
 
     @Override
+    public void OnTextChanged(CharSequence charSequence) {
+
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_save:

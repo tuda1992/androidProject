@@ -47,4 +47,9 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
     public void OnActionSearch(String input) {
 
     }
+
+    @Override
+    public void OnTextChanged(CharSequence charSequence) {
+
+    }
 }
