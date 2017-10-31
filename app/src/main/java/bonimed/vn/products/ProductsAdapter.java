@@ -48,20 +48,22 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private RelativeLayout mRlPurchase, mRlDetail;
-        private ImageView mIvProduct;
-        private TextView mTvProductName, mTvProductUnit, mTvProductMoney;
+        private ImageView mIvProduct,mIvPurchase;
+        private TextView mTvProductName, mTvProductUnit, mTvProductMoney,mTvDetail;
 
         public ViewHolder(View v) {
             super(v);
             mRlPurchase = (RelativeLayout) v.findViewById(R.id.rl_purchase);
             mRlDetail = (RelativeLayout) v.findViewById(R.id.rl_detail);
             mIvProduct = (ImageView) v.findViewById(R.id.iv_product);
+            mIvPurchase = (ImageView) v.findViewById(R.id.iv_purchase);
             mTvProductName = (TextView) v.findViewById(R.id.tv_product_name);
             mTvProductUnit = (TextView) v.findViewById(R.id.tv_product_unit);
             mTvProductMoney = (TextView) v.findViewById(R.id.tv_product_money);
+            mTvDetail = (TextView) v.findViewById(R.id.tv_detail);
 
-            mRlPurchase.setOnClickListener(this);
-            mRlDetail.setOnClickListener(this);
+            mIvPurchase.setOnClickListener(this);
+            mTvDetail.setOnClickListener(this);
 
         }
 
@@ -69,18 +71,18 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             mTvProductName.setText(item.productName);
             mTvProductUnit.setText(item.description);
             mTvProductMoney.setText(Utils.convertToCurrencyStr(item.salePrice.intValue()));
-            Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.mipmap.ic_launcher).into(mIvProduct);
+            Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
         }
 
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.rl_purchase:
+                case R.id.iv_purchase:
                     if (mItemClickCallBackListener != null) {
                         mItemClickCallBackListener.onClickPurchase(mResultData.get(getAdapterPosition()));
                     }
                     break;
-                case R.id.rl_detail:
+                case R.id.tv_detail:
                     if (mItemClickCallBackListener != null) {
                         mItemClickCallBackListener.onClickDetail(mResultData.get(getAdapterPosition()));
                     }

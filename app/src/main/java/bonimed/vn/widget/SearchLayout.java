@@ -9,25 +9,24 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bonimed.vn.R;
 import bonimed.vn.adapter.AutoCompleteAdapter;
-import bonimed.vn.adapter.SearchAutoCompleteData;
 import bonimed.vn.base.BaseCustomLayout;
 import bonimed.vn.products.DataProduct;
-import bonimed.vn.products.Products;
 
 /**
  * Created by acv on 10/25/17.
  */
 
-public class SearchLayout extends BaseCustomLayout implements View.OnClickListener {
+public class SearchLayout extends BaseCustomLayout implements View.OnClickListener, AutoCompleteAdapter.ItemClicKCallBackListener {
 
     private AutoCompleteTextView mEdtInput;
     private RelativeLayout mRlSearch;
     private SearchCallBackListener mSearchCallBackListener;
-    private SearchAutoCompleteData mAutoCompleteAdapter;
+    private AutoCompleteAdapter mAutoCompleteAdapter;
     private Context mContext;
     private ImageView mIvSearch;
 
@@ -42,9 +41,20 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onItemClick(DataProduct item) {
+        if (mSearchCallBackListener != null) {
+            mEdtInput.dismissDropDown();
+            mSearchCallBackListener.OnItemClick(item);
+        }
+    }
+
     public interface SearchCallBackListener {
         void OnActionSearch(String input);
+
         void OnTextChanged(CharSequence charSequence);
+
+        void OnItemClick(DataProduct item);
     }
 
     public void setListener(SearchCallBackListener searchCallBackListener) {
@@ -75,16 +85,13 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
 
     @Override
     protected void initData() {
-        mEdtInput.setThreshold(2);
+        mEdtInput.setThreshold(1);
     }
 
-    public void setDataForAutoComplete(List<DataProduct> listData) {
-        mAutoCompleteAdapter = new SearchAutoCompleteData(mContext, listData);
+    public void setDataForAutoComplete(ArrayList<DataProduct> listData) {
+        mAutoCompleteAdapter = new AutoCompleteAdapter(mContext, listData);
         mEdtInput.setAdapter(mAutoCompleteAdapter);
-    }
-
-    public void notifiDataSetChanged(){
-        mAutoCompleteAdapter.notifyDataSetChanged();
+        mAutoCompleteAdapter.setListener(this);
     }
 
     @Override
@@ -98,7 +105,7 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (mSearchCallBackListener != null){
+                if (mSearchCallBackListener != null) {
                     mSearchCallBackListener.OnTextChanged(charSequence);
                 }
             }

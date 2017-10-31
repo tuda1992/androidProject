@@ -17,6 +17,7 @@ import bonimed.vn.cart.CartFragment;
 import bonimed.vn.login.UserLogin;
 import bonimed.vn.navigationdrawer.FragmentDrawer;
 import bonimed.vn.orders.OrdersFragment;
+import bonimed.vn.products.ListOrderDataProduct;
 import bonimed.vn.products.ProductsFragment;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.PrefManager;
@@ -63,7 +64,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         }
     }
 
-    public String getSecurityToken(){
+    public String getSecurityToken() {
         return mUserLogin == null ? "" : mUserLogin.securityToken;
     }
 
@@ -88,10 +89,20 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
                 title = getString(R.string.title_products);
                 break;
             case 1:
+                int quantity = 0;
+                String orderProduct = PrefManager.getJsonObjectOrderProduct(this);
+                if (!TextUtils.isEmpty(orderProduct)) {
+                    ListOrderDataProduct listOrderDataProduct = new Gson().fromJson(orderProduct, ListOrderDataProduct.class);
+                    if (listOrderDataProduct != null && listOrderDataProduct.orderList != null) {
+                        for (int i = 0; i < listOrderDataProduct.orderList.size(); i++) {
+                            quantity += listOrderDataProduct.orderList.get(i).orderQuantity;
+                        }
+                    }
+                }
                 setVisibleActionSearch(false);
                 fragment = new CartFragment();
                 nameFragment = Constants.CART_FRAGMENT;
-                title = getString(R.string.title_cart);
+                title = getString(R.string.title_cart) + "( " + quantity + " Sản phẩm )";
                 break;
             case 2:
                 setVisibleActionSearch(false);

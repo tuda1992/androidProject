@@ -3,6 +3,7 @@ package bonimed.vn.cart;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +13,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import bonimed.vn.R;
+import bonimed.vn.products.OrderDataProduct;
+import bonimed.vn.util.Constants;
+import bonimed.vn.util.Utils;
 
 /**
  * Created by acv on 10/27/17.
@@ -24,15 +30,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
-    private List<String> mResultData;
-    private String[] mDataset = new String[20];
+    private List<OrderDataProduct> mResultData;
+//    private String[] mDataset = new String[20];
 
     public interface ItemClickCallBackListener {
         void onClickItemCancel(String input);
     }
 
 
-    public CartAdapter(Context context, List<String> resultData, ItemClickCallBackListener listener) {
+    public CartAdapter(Context context, List<OrderDataProduct> resultData, ItemClickCallBackListener listener) {
         this.mContext = context;
         this.mItemClickCallBackListener = listener;
         this.mResultData = resultData;
@@ -65,10 +71,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mEdtNumber.addTextChangedListener(mMyCustomEditTextListener);
         }
 
-        public void setData(String item, int position) {
-            mTvProductName.setText(item);
-            mMyCustomEditTextListener.updatePosition(position);
-            mEdtNumber.setText(mDataset[position]);
+        public void setData(OrderDataProduct item, int position) {
+            mTvProductName.setText(item.dataProduct.productName);
+            Picasso.with(mContext).load(Constants.URL_BONIMED + item.dataProduct.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
+            mTvProductUnit.setText(item.dataProduct.description);
+            mMyCustomEditTextListener.updatePosition(position, mTvTotalPrice, item.dataProduct.salePrice.intValue());
+            mEdtNumber.setText(item.orderQuantity.intValue() + "");
+            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.orderQuantity.intValue() * item.dataProduct.salePrice.intValue()));
+            mTvPrice.setText(Utils.convertToCurrencyStr(item.dataProduct.salePrice));
         }
 
         @Override
@@ -97,9 +107,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private class MyCustomEditTextListener implements TextWatcher {
         private int position;
+        private TextView mTvTotal;
+        private int mPrice;
 
-        public void updatePosition(int position) {
+        public void updatePosition(int position, TextView tvTotal, int price) {
             this.position = position;
+            this.mTvTotal = tvTotal;
+            this.mPrice = price;
         }
 
         @Override
@@ -109,7 +123,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            mDataset[position] = charSequence.toString();
+            if (!TextUtils.isEmpty(charSequence.toString())) {
+                mResultData.get(position).orderQuantity = Integer.valueOf(charSequence.toString());
+                mTvTotal.setText(Utils.convertToCurrencyStr(mResultData.get(position).orderQuantity * mPrice));
+            }
         }
 
         @Override

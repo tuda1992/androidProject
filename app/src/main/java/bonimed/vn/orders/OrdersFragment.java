@@ -8,6 +8,7 @@ import android.view.View;
 import bonimed.vn.R;
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.base.BaseFragment;
+import bonimed.vn.products.DataProduct;
 import bonimed.vn.widget.SearchLayout;
 
 /**
@@ -50,6 +51,11 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
 
     @Override
     public void OnTextChanged(CharSequence charSequence) {
+
+    }
+
+    @Override
+    public void OnItemClick(DataProduct item) {
 
     }
 }

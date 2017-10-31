@@ -14,39 +14,37 @@
             android:id="@+id/iv_logo"
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
-            android:src="@mipmap/ic_launcher"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_centerVertical="true"/>
+            android:src="@drawable/ic_logo" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_toRightOf="@id/iv_logo"
-            android:gravity="center_vertical"
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
+            android:layout_toRightOf="@id/iv_logo"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_16sdp"
-                android:includeFontPadding="false"
                 android:layout_centerVertical="true"
-                android:textColor="@android:color/white"
+                android:includeFontPadding="false"
                 android:text="Welcome"
-                />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
 
             <TextView
                 android:id="@+id/tv_name_customer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_16sdp"
-                android:includeFontPadding="false"
                 android:layout_centerVertical="true"
-                android:textColor="@android:color/white"
+                android:includeFontPadding="false"
                 android:text="Tên Khách Hàng"
-                />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
 
         </LinearLayout>
 

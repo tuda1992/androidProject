@@ -231,19 +231,21 @@
 
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe"
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+    <!--android:id="@+id/swipe"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_above="@+id/ll_info"-->
+    <!--android:layout_below="@+id/search_layout">-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_info"
-        android:layout_below="@+id/search_layout">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_data"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:scrollbars="none" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_below="@+id/search_layout"
+        android:clipToPadding="false"
+        android:scrollbars="none" />
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
 </RelativeLayout>

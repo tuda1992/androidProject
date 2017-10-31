@@ -50,4 +50,9 @@
 
     <string name="toast_order_product">Sản phẩm này đã được thêm vào giỏ hàng</string>
 
+
+    <string name="information_product">Thông tin sản phẩm</string>
+    <string name="purchase_product">Mua hàng</string>
+    <string name="price_product">Đơn giá</string>
+
 </resources>

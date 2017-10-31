@@ -13,7 +13,7 @@
         android:layout_height="@dimen/_100sdp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_20sdp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/ic_logo" />
 
     <TextView
         android:id="@+id/tv_hot_line"
@@ -22,8 +22,8 @@
         android:layout_below="@+id/iv_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_5sdp"
-        android:includeFontPadding="false"
         android:autoLink="web"
+        android:includeFontPadding="false"
         android:text="@string/hot_line"
         android:textColor="@android:color/white"
         android:textSize="@dimen/_15sdp"
@@ -105,8 +105,7 @@
         android:textAllCaps="true"
         android:textColor="@android:color/white"
         android:textSize="@dimen/_10sdp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_license"

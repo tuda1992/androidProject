@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -40,11 +41,13 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private LinearLayoutManager mLinearLayoutManager;
     private EndlessRecyclerViewScrollListener mScrollListener;
     private List<DataProduct> mListData = new ArrayList<>();
+    private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     private List<OrderDataProduct> mListOrder = new ArrayList<>();
     private int mCurrentPage = 1;
     private int mTotalProduct;
     private String mSearch = "";
     private boolean mIsExist;
+    private Gson mGson;
 
     @Override
     protected int getLayoutView() {
@@ -87,12 +90,21 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
     @Override
     protected void initDatas(Bundle savedInstanceState) {
+        mGson = new Gson();
         mRv.setHasFixedSize(true);
         mRv.setLayoutManager(mLinearLayoutManager);
-
         mProductsAdapter = new ProductsAdapter(getActivity(), mListData, this);
         mRv.setAdapter(mProductsAdapter);
-//        mSearchLayout.setDataForAutoComplete(mListData);
+
+        String orderProduct = PrefManager.getJsonObjectOrderProduct(getActivity());
+        if (!TextUtils.isEmpty(orderProduct)){
+            ListOrderDataProduct listOrderDataProduct = mGson.fromJson(orderProduct, ListOrderDataProduct.class);
+            if (listOrderDataProduct != null && listOrderDataProduct.orderList != null){
+                mListOrder.clear();
+                mListOrder.addAll(listOrderDataProduct.orderList);
+            }
+        }
+
         callApiProducts();
     }
 
@@ -121,7 +133,9 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
                             mCurrentPage++;
                             mListData.addAll(resultProduct.data);
                             mProductsAdapter.notifyDataSetChanged();
-                            mSearchLayout.setDataForAutoComplete(mListData);
+                            mListSearch.clear();
+                            mListSearch.addAll(resultProduct.data);
+                            mSearchLayout.setDataForAutoComplete(mListSearch);
                         }
                     }
                 }
@@ -166,8 +180,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         }
         ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
         listOrderDataProduct.orderList = mListOrder;
-        Gson gson = new Gson();
-        String orderList = gson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
+        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
         PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
     }
 
@@ -187,6 +200,15 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     @Override
     public void OnTextChanged(CharSequence charSequence) {
         mSearch = charSequence.toString();
+        mCurrentPage = 1;
+        mListData.clear();
+        callApiProducts();
+    }
+
+    @Override
+    public void OnItemClick(DataProduct item) {
+        mSearch = item.productName;
+        mListData.clear();
         mCurrentPage = 1;
         callApiProducts();
     }

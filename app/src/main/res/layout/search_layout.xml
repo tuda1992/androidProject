@@ -12,6 +12,7 @@
         android:background="@drawable/border_edittext"
         android:hint="@string/input_text_hint"
         android:padding="@dimen/_5sdp"
+        android:singleLine="true"
         android:textColor="@android:color/black"
         android:textColorHint="@android:color/darker_gray"
         android:textSize="@dimen/_12sdp" />

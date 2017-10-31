@@ -22,7 +22,7 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1.5">
+        android:layout_weight="1.4">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,19 +75,19 @@
         android:id="@+id/rl_detail"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7">
+        android:layout_weight="0.6">
 
         <TextView
             android:id="@+id/tv_detail"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
-            android:background="@color/colorAccent"
+            android:background="@drawable/effect_button"
             android:gravity="center"
             android:padding="@dimen/_3sdp"
             android:text="@string/detal_bill"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/_10sdp" />
+            android:textSize="@dimen/_9sdp" />
 
     </RelativeLayout>
 
@@ -95,16 +95,16 @@
         android:id="@+id/rl_purchase"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7">
+        android:layout_weight="0.9">
 
         <ImageView
+            android:id="@+id/iv_purchase"
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"
             android:layout_centerInParent="true"
-            android:background="@color/colorAccent"
+            android:background="@drawable/effect_button"
             android:padding="@dimen/_5sdp"
-            android:src="@drawable/ic_cart"
-            android:textSize="@dimen/_10sdp" />
+            android:src="@drawable/ic_cart" />
 
     </RelativeLayout>
 

@@ -37,7 +37,7 @@ import okhttp3.Response;
 
 public class FastNetworking {
 
-    private final String BASE_URL = "https://bonimed.vn/api/";
+//    private final String BASE_URL = "https://bonimed.vn/api/";
     private final String BASE_URL_TEST = "https://bonimed.com.vn/api/";
     private final String URL_LOGIN = "Authenticate/Login";
     private final String URL_PRODUCTS = "Products/ListProductsPaging";
@@ -67,7 +67,7 @@ public class FastNetworking {
             e.printStackTrace();
         }
         HashMap<String, String> headers = initCustomHeader("");
-        AndroidNetworking.post(BASE_URL + URL_LOGIN)
+        AndroidNetworking.post(BASE_URL_TEST + URL_LOGIN)
                 .addHeaders(headers)
                 .addJSONObjectBody(jsonObject)
                 .build()
@@ -88,7 +88,7 @@ public class FastNetworking {
 
     public void callApiProducts(JSONObject jsonObject, String token) {
         HashMap<String, String> headers = initCustomContentType();
-        AndroidNetworking.post(BASE_URL + URL_PRODUCTS)
+        AndroidNetworking.post(BASE_URL_TEST + URL_PRODUCTS)
                 .addHeaders(headers)
                 .addStringBody("application/json")
                 .addQueryParameter(Constants.SECURITY_TOKEN, token)

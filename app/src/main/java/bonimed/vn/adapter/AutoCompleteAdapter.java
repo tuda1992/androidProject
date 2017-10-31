@@ -21,72 +21,93 @@ import bonimed.vn.products.DataProduct;
  * Created by acv on 10/25/17.
  */
 
-public class AutoCompleteAdapter extends ArrayAdapter<String> {
+public class AutoCompleteAdapter extends ArrayAdapter<DataProduct> {
 
-    private Context mContext;
-    private List<DataProduct> mListData, mListSuggestion, mListTemple;
-    private int mViewResourceId;
+    private ArrayList<DataProduct> items;
+    private ArrayList<DataProduct> itemsAll;
+    private ArrayList<DataProduct> suggestions;
+    private int viewResourceId;
+    private ItemClicKCallBackListener mListener;
+    private TextView mNameProduct;
 
-    public AutoCompleteAdapter(Context context, List<DataProduct> listData) {
-        super(context, R.layout.row_item_autocomplete);
-        this.mContext = context;
-        this.mListData = listData;
-        this.mViewResourceId = R.layout.row_item_autocomplete;
-        this.mListSuggestion = new ArrayList<>();
-        this.mListTemple = new ArrayList<>(mListData);
+    public AutoCompleteAdapter(Context context, ArrayList<DataProduct> items) {
+        super(context, R.layout.row_item_autocomplete, items);
+        this.items = items;
+        this.itemsAll = (ArrayList<DataProduct>) items.clone();
+        this.suggestions = new ArrayList<DataProduct>();
+        this.viewResourceId = R.layout.row_item_autocomplete;
     }
 
+    public void setListener(ItemClicKCallBackListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface ItemClicKCallBackListener {
+        void onItemClick(DataProduct item);
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(mViewResourceId, null);
+            v = vi.inflate(viewResourceId, null);
         }
-        String product = mListData.get(position).productName;
-        if (product != null) {
-            TextView tvProductName = (TextView) v.findViewById(R.id.tv_product_name);
-            if (tvProductName != null) {
-                tvProductName.setText(product);
+        mNameProduct = (TextView) v.findViewById(R.id.tv_product_name);
+        final DataProduct customer = items.get(position);
+        if (customer != null) {
+            if (mNameProduct != null) {
+                mNameProduct.setText(customer.productName);
             }
         }
+        mNameProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    if (mNameProduct != null) {
+                        mNameProduct.setText(customer.productName);
+                    }
+                    mListener.onItemClick(customer);
+                }
+            }
+        });
         return v;
     }
 
     @Override
     public Filter getFilter() {
-        return mProductFilter;
+        return nameFilter;
     }
 
-    Filter mProductFilter = new Filter() {
+    Filter nameFilter = new Filter() {
         @Override
         public String convertResultToString(Object resultValue) {
-            String str = resultValue.toString();
+            String str = ((DataProduct) (resultValue)).productName;
             return str;
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults filterResults = new FilterResults();
             if (constraint != null) {
-                mListSuggestion.clear();
-                for (DataProduct product : mListTemple) {
-                    if (product.productName.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
-                        mListSuggestion.add(product);
-                    }
+                suggestions.clear();
+                for (DataProduct customer : itemsAll) {
+                    suggestions.add(customer);
                 }
-                filterResults.values = mListSuggestion;
-                filterResults.count = mListSuggestion.size();
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = suggestions;
+                filterResults.count = suggestions.size();
+                return filterResults;
+            } else {
+                return new FilterResults();
             }
-            return filterResults;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             ArrayList<DataProduct> filteredList = (ArrayList<DataProduct>) results.values;
             if (results != null && results.count > 0) {
+                clear();
                 for (DataProduct c : filteredList) {
-                    add(c.productName);
+                    add(c);
                 }
                 notifyDataSetChanged();
             }
