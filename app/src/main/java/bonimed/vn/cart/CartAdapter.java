@@ -31,10 +31,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
     private List<OrderDataProduct> mResultData;
+    private int mTotalPrice = 0;
 //    private String[] mDataset = new String[20];
 
     public interface ItemClickCallBackListener {
-        void onClickItemCancel(String input);
+        void onClickItemCancel(OrderDataProduct item);
+
+        void onInputQuantityChanged(int totalPrice);
     }
 
 
@@ -86,7 +89,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             switch (view.getId()) {
                 case R.id.rl_cancel:
                     if (mItemClickCallBackListener != null) {
-                        mItemClickCallBackListener.onClickItemCancel("");
+                        mItemClickCallBackListener.onClickItemCancel(mResultData.get(getAdapterPosition()));
                     }
                     break;
 
@@ -126,12 +129,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             if (!TextUtils.isEmpty(charSequence.toString())) {
                 mResultData.get(position).orderQuantity = Integer.valueOf(charSequence.toString());
                 mTvTotal.setText(Utils.convertToCurrencyStr(mResultData.get(position).orderQuantity * mPrice));
+                mTotalPrice += mResultData.get(position).orderQuantity * mResultData.get(position).dataProduct.salePrice;
+                if (mItemClickCallBackListener != null)
+                    mItemClickCallBackListener.onInputQuantityChanged(mTotalPrice);
             }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            // no op
         }
     }
 

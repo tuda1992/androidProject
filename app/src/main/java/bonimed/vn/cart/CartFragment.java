@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,8 +30,10 @@ import bonimed.vn.products.Products;
 import bonimed.vn.products.ProductsAdapter;
 import bonimed.vn.products.ResultProduct;
 import bonimed.vn.util.PrefManager;
+import bonimed.vn.util.Utils;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
+import okhttp3.internal.Util;
 
 /**
  * Created by mac on 10/24/17.
@@ -160,7 +163,22 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     }
 
     @Override
-    public void onClickItemCancel(String input) {
-
+    public void onClickItemCancel(OrderDataProduct product) {
+        mListData.remove(product);
     }
+
+    @Override
+    public void onInputQuantityChanged (int totalPrice) {
+        mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
+        listOrderDataProduct.orderList = mListData;
+        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
+        PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
+    }
+
 }
