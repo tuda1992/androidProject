@@ -32,21 +32,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
     //    private List<OrderDataProduct> mResultData;
-    private List<DataProduct> mResultData;
-    private int mTotalPrice;
+    private List<OrderProduct> mResultData;
 
     public interface ItemClickCallBackListener {
-        void onClickItemCancel(DataProduct item);
+        void onClickItemCancel(OrderProduct item);
 
-        void onInputQuantityChanged(int totalPrice);
+        void onInputQuantityChanged();
     }
 
-
-    public CartAdapter(Context context, List<DataProduct> resultData, ItemClickCallBackListener listener) {
+    public CartAdapter(Context context, List<OrderProduct> resultData, ItemClickCallBackListener listener) {
         this.mContext = context;
         this.mItemClickCallBackListener = listener;
         this.mResultData = resultData;
-        this.mTotalPrice = 0;
     }
 
     @Override
@@ -57,7 +54,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private RelativeLayout mRlCancel;
-        private ImageView mIvProduct;
+        private ImageView mIvProduct, mIvAdd, mIvRemove;
+        ;
         private TextView mTvProductName, mTvProductUnit, mTvPrice, mTvTotalPrice;
         private EditText mEdtNumber;
         private MyCustomEditTextListener mMyCustomEditTextListener;
@@ -70,28 +68,64 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mTvProductUnit = (TextView) v.findViewById(R.id.tv_product_unit);
             mTvPrice = (TextView) v.findViewById(R.id.tv_price);
             mTvTotalPrice = (TextView) v.findViewById(R.id.tv_total_price);
+            mIvAdd = (ImageView) v.findViewById(R.id.iv_add);
+            mIvRemove = (ImageView) v.findViewById(R.id.iv_remove);
             mEdtNumber = (EditText) v.findViewById(R.id.edt_input_number);
             mRlCancel.setOnClickListener(this);
             mMyCustomEditTextListener = new MyCustomEditTextListener();
             mEdtNumber.addTextChangedListener(mMyCustomEditTextListener);
         }
 
-        public void setData(final DataProduct item, int position) {
+        public void setData(final OrderProduct item, final int position) {
             mTvProductName.setText(item.productName);
             Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
             mTvProductUnit.setText(item.description);
-            mMyCustomEditTextListener.updatePosition(position, mTvTotalPrice, item.salePrice.intValue());
-            mEdtNumber.setText(item.orderQuantity.intValue() + "");
-            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.orderQuantity.intValue() * item.salePrice.intValue()));
-            mTvPrice.setText(Utils.convertToCurrencyStr(item.salePrice));
+            mMyCustomEditTextListener.updatePosition(position);
+            mEdtNumber.setText(item.quantity.intValue() + "");
+            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
+            mTvPrice.setText(Utils.convertToCurrencyStr(item.salePrice.intValue()));
+
             mEdtNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean b) {
-                    if (!b){
-                        mEdtNumber.setText(item.orderQuantity.intValue() + "");
+                    if (!b) {
+                        if (item.quantity.intValue() >= item.quota.intValue()) {
+                            mEdtNumber.setText(item.quota.intValue() + "");
+                            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quota.intValue() * item.salePrice.intValue()));
+                        } else {
+                            mEdtNumber.setText(item.quantity.intValue() + "");
+                            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
+                        }
+                        if (mItemClickCallBackListener != null)
+                            mItemClickCallBackListener.onInputQuantityChanged();
                     }
                 }
             });
+
+            mIvAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mResultData.get(position).quantity < mResultData.get(position).quota) {
+                        mResultData.get(position).quantity++;
+                        mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
+                        if (mItemClickCallBackListener != null)
+                            mItemClickCallBackListener.onInputQuantityChanged();
+                    }
+                }
+            });
+
+            mIvRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mResultData.get(position).quantity >= 2) {
+                        mResultData.get(position).quantity--;
+                        mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
+                        if (mItemClickCallBackListener != null)
+                            mItemClickCallBackListener.onInputQuantityChanged();
+                    }
+                }
+            });
+
         }
 
         @Override
@@ -102,7 +136,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                         mItemClickCallBackListener.onClickItemCancel(mResultData.get(getAdapterPosition()));
                     }
                     break;
-
             }
         }
     }
@@ -120,13 +153,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private class MyCustomEditTextListener implements TextWatcher {
         private int position;
-        private TextView mTvTotal;
-        private int mPrice;
 
-        public void updatePosition(int position, TextView tvTotal, int price) {
+
+        public void updatePosition(int position) {
             this.position = position;
-            this.mTvTotal = tvTotal;
-            this.mPrice = price;
         }
 
         @Override
@@ -137,15 +167,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             if (!TextUtils.isEmpty(charSequence.toString())) {
-                if (Integer.valueOf(charSequence.toString()) > mResultData.get(position).quantity) {
-                    mResultData.get(position).orderQuantity = mResultData.get(position).quantity;
-                } else {
-                    mResultData.get(position).orderQuantity = Integer.valueOf(charSequence.toString());
-                }
-                mTvTotal.setText(Utils.convertToCurrencyStr(mResultData.get(position).orderQuantity * mPrice));
-                mTotalPrice += mResultData.get(position).orderQuantity * mResultData.get(position).salePrice;
-                if (mItemClickCallBackListener != null)
-                    mItemClickCallBackListener.onInputQuantityChanged(mTotalPrice);
+                mResultData.get(position).quantity = Integer.valueOf(charSequence.toString());
             }
         }
 
@@ -153,10 +175,4 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         public void afterTextChanged(Editable editable) {
         }
     }
-
-    public void updateSalePrice() {
-        mTotalPrice = 0;
-        notifyDataSetChanged();
-    }
-
 }

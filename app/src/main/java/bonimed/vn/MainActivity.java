@@ -1,5 +1,7 @@
 package bonimed.vn;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,16 +10,19 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.google.gson.Gson;
 
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.cart.CartFragment;
+import bonimed.vn.cart.OrderLines;
 import bonimed.vn.login.UserLogin;
 import bonimed.vn.navigationdrawer.FragmentDrawer;
 import bonimed.vn.orders.OrdersFragment;
-import bonimed.vn.products.ListOrderDataProduct;
 import bonimed.vn.products.ProductsFragment;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.PrefManager;
@@ -67,6 +72,9 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     public String getSecurityToken() {
         return mUserLogin == null ? "" : mUserLogin.securityToken;
     }
+    public String getUserId() {
+        return mUserLogin == null ? "" : mUserLogin.id;
+    }
 
     @Override
     public void onDrawerItemSelected(View view, int position) {
@@ -92,10 +100,10 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
                 int quantity = 0;
                 String orderProduct = PrefManager.getJsonObjectOrderProduct(this);
                 if (!TextUtils.isEmpty(orderProduct)) {
-                    ListOrderDataProduct listOrderDataProduct = new Gson().fromJson(orderProduct, ListOrderDataProduct.class);
-                    if (listOrderDataProduct != null && listOrderDataProduct.orderList != null) {
-                        for (int i = 0; i < listOrderDataProduct.orderList.size(); i++) {
-                            quantity += listOrderDataProduct.orderList.get(i).orderQuantity;
+                    OrderLines orderLines = new Gson().fromJson(orderProduct, OrderLines.class);
+                    if (orderLines != null && orderLines.orderList != null) {
+                        for (int i = 0; i < orderLines.orderList.size(); i++) {
+                            quantity += orderLines.orderList.get(i).quantity;
                         }
                     }
                 }
@@ -172,4 +180,32 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         super.onBackPressed();
         finish();
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View v = getCurrentFocus();
+
+        if (v != null &&
+                (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) &&
+                v instanceof EditText &&
+                !v.getClass().getName().startsWith("android.webkit.")) {
+            int scrcoords[] = new int[2];
+            v.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + v.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + v.getTop() - scrcoords[1];
+
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
+                hideKeyboard(this);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+
+
 }

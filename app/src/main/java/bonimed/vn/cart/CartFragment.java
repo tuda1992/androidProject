@@ -25,16 +25,13 @@ import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseFragment;
 import bonimed.vn.listener.DialogTwoButtonCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
+import bonimed.vn.listener.StringCallBackListener;
 import bonimed.vn.products.DataProduct;
-import bonimed.vn.products.ListOrderDataProduct;
-import bonimed.vn.products.OrderDataProduct;
 import bonimed.vn.products.Products;
-import bonimed.vn.products.ProductsAdapter;
 import bonimed.vn.products.ResultProduct;
 import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.Utils;
-import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
 import okhttp3.internal.Util;
 
@@ -50,7 +47,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private SearchLayout mSearchLayout;
     private CartAdapter mCartAdapter;
     //    private List<OrderDataProduct> mListData = new ArrayList<>();
-    private List<DataProduct> mListData = new ArrayList<>();
+    private List<OrderProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
     private String mStrOrder;
@@ -95,13 +92,15 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         mRv.setAdapter(mCartAdapter);
 
         if (!TextUtils.isEmpty(mStrOrder)) {
-            ListOrderDataProduct listOrderDataProduct = mGson.fromJson(mStrOrder, ListOrderDataProduct.class);
-            if (listOrderDataProduct != null && listOrderDataProduct.orderList != null) {
+            OrderLines orderLines = mGson.fromJson(mStrOrder, OrderLines.class);
+            if (orderLines != null && orderLines.orderList != null) {
                 mListData.clear();
-                mListData.addAll(listOrderDataProduct.orderList);
+                mListData.addAll(orderLines.orderList);
                 mCartAdapter.notifyDataSetChanged();
                 if (mListData.size() == 0) {
                     priceWhenNoData();
+                } else {
+                    updateSalePrice();
                 }
             }
         } else {
@@ -132,8 +131,8 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         callApiProducts();
         if (mListData.size() > 0) {
             for (int i = 0; i < mListData.size(); i++) {
-                if (item.id.equalsIgnoreCase(mListData.get(i).id)) {
-                    mListData.get(i).orderQuantity++;
+                if (item.id.equalsIgnoreCase(mListData.get(i).productId)) {
+                    mListData.get(i).quantity++;
                     mIsExist = true;
                     break;
                 } else {
@@ -141,15 +140,17 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                 }
             }
         } else {
-            mIsExist = true;
+            mIsExist = false;
         }
 
         if (!mIsExist) {
             mIsExist = true;
-            mListData.add(item);
+            OrderProduct orderProduct = new OrderProduct(item);
+            mListData.add(orderProduct);
         }
 
-        mCartAdapter.updateSalePrice();
+        mCartAdapter.notifyDataSetChanged();
+        updateSalePrice();
 
         updateTitle();
     }
@@ -158,7 +159,11 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_save:
-//                OrderLines orderLines = new OrderLines();
+                OrderLines orderLines = new OrderLines();
+                orderLines.buyerId = ((MainActivity) getActivity()).getUserId();
+                orderLines.orderList = mListData;
+                String jsonUpload = mGson.toJson(orderLines);
+                callApiUpload(jsonUpload);
                 break;
             case R.id.rl_cancel:
                 if (isAdded()) {
@@ -183,8 +188,37 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         }
     }
 
+    private void callApiUpload(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+
+            FastNetworking fastNetworking = new FastNetworking(getActivity(), new StringCallBackListener() {
+                @Override
+                public void onResponse(String string) {
+                    Log.d("TUDA", "onResponse = " + string);
+                    if (string.equalsIgnoreCase("true")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.order_success), Toast.LENGTH_SHORT).show();
+                        mListData.clear();
+                        mCartAdapter.notifyDataSetChanged();
+                        PrefManager.removeJsonObjectOrderProduct(getActivity());
+                        priceWhenNoData();
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onError(String messageError) {
+                    Log.d("TUDA", "onError = " + messageError);
+                }
+            });
+            fastNetworking.callApiUpload(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void callApiProducts() {
-        final Gson gson = new Gson();
         Products products = new Products();
         products.pageIndex = 1;
         products.pageSize = 25;
@@ -192,14 +226,14 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         products.productStatus = 1;
         products.productType = 2;
         products.searchText = mSearch;
-        final String json = gson.toJson(products);
+        final String json = mGson.toJson(products);
         try {
             JSONObject jsonObject = new JSONObject(json);
 
             FastNetworking fastNetworking = new FastNetworking(getActivity(), new JsonObjectCallBackListener() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
-                    ResultProduct resultProduct = gson.fromJson(jsonObject.toString(), ResultProduct.class);
+                    ResultProduct resultProduct = mGson.fromJson(jsonObject.toString(), ResultProduct.class);
                     if (resultProduct.data != null && resultProduct.data.size() > 0) {
                         mListSearch.clear();
                         mListSearch.addAll(resultProduct.data);
@@ -218,14 +252,15 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     }
 
     @Override
-    public void onClickItemCancel(final DataProduct product) {
+    public void onClickItemCancel(final OrderProduct product) {
         if (isAdded()) {
             DialogUtil.showAlertDialogButtonClicked(getActivity(), getString(R.string.title_remove_product)
                     , getString(R.string.message_remove_product), getString(R.string.text_positive), getString(R.string.text_negative), new DialogTwoButtonCallBackListener() {
                         @Override
                         public void onPositiveButtonClick() {
                             mListData.remove(product);
-                            mCartAdapter.updateSalePrice();
+                            mCartAdapter.notifyDataSetChanged();
+                            updateSalePrice();
                             updateTitle();
                         }
 
@@ -241,26 +276,43 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         int quantity = 0;
         if (mListData.size() > 0) {
             for (int i = 0; i < mListData.size(); i++) {
-                quantity += mListData.get(i).orderQuantity;
+                quantity += mListData.get(i).quantity;
             }
         }
         ((MainActivity) getActivity()).setTitleForCart(quantity);
     }
 
     @Override
-    public void onInputQuantityChanged(int totalPrice) {
-        mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
-        mTvTotalMoney.setText(Utils.convertToCurrencyStr(totalPrice + 20000));
+    public void onInputQuantityChanged() {
+        updateSalePrice();
+
         updateTitle();
+    }
+
+    private void updateSalePrice() {
+        int totalPrice = 0;
+        for (OrderProduct item : mListData) {
+            totalPrice += item.quantity * item.salePrice;
+        }
+        mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
+        if (totalPrice == 0) {
+            mTvTotalMoney.setText(Utils.convertToCurrencyStr(0));
+            mTvServiceMoney.setText(Utils.convertToCurrencyStr(0));
+        } else {
+            mTvTotalMoney.setText(Utils.convertToCurrencyStr(totalPrice + 20000));
+            mTvServiceMoney.setText(Utils.convertToCurrencyStr(20000));
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
-        listOrderDataProduct.orderList = mListData;
-        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
-        PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
+        if (mListData != null && mListData.size() > 0) {
+            OrderLines orderLines = new OrderLines();
+            orderLines.orderList = mListData;
+            String orderList = mGson.toJson(orderLines);
+            PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
+        }
     }
 
 }

@@ -13,7 +13,7 @@ public class OrderLines {
 
     @SerializedName("OrderLines")
     @Expose
-    public List<OrderProduct> orderLines;
+    public List<OrderProduct> orderList;
     @SerializedName("BuyerId")
     @Expose
     public String buyerId;

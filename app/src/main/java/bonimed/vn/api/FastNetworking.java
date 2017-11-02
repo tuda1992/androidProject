@@ -13,6 +13,7 @@ import com.androidnetworking.interceptors.GzipRequestInterceptor;
 import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 
 import bonimed.vn.listener.JsonArrayCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
+import bonimed.vn.listener.StringCallBackListener;
 import bonimed.vn.util.Constants;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -37,7 +39,7 @@ import okhttp3.Response;
 
 public class FastNetworking {
 
-//    private final String BASE_URL = "https://bonimed.vn/api/";
+    //    private final String BASE_URL = "https://bonimed.vn/api/";
     private final String BASE_URL = "https://bonimed.com.vn/api/";
     private final String URL_LOGIN = "Authenticate/Login";
     private final String URL_PRODUCTS = "Products/ListProductsPaging";
@@ -47,6 +49,7 @@ public class FastNetworking {
     private Context mContext;
     private JsonObjectCallBackListener mListenerObject;
     private JsonArrayCallBackListener mListenerArray;
+    private StringCallBackListener mListenerString;
 
     public FastNetworking(Context context, JsonObjectCallBackListener listenerObject) {
         this.mContext = context;
@@ -56,6 +59,11 @@ public class FastNetworking {
     public FastNetworking(Context context, JsonArrayCallBackListener listenerArray) {
         this.mContext = context;
         this.mListenerArray = listenerArray;
+    }
+
+    public FastNetworking(Context context, StringCallBackListener listenerString) {
+        this.mContext = context;
+        this.mListenerString = listenerString;
     }
 
     public void callApiLogin(JSONObject jsonObject) {
@@ -105,6 +113,28 @@ public class FastNetworking {
                     public void onError(ANError error) {
                         if (mListenerObject != null)
                             mListenerObject.onError(error.getErrorBody().toString());
+                    }
+                });
+    }
+
+    public void callApiUpload(JSONObject jsonObject, String token) {
+        HashMap<String, String> headers = initCustomContentType();
+        AndroidNetworking.post(BASE_URL + URL_ORDERS_CREATE)
+                .addHeaders(headers)
+                .addStringBody("application/json")
+                .addQueryParameter(Constants.SECURITY_TOKEN, token)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (mListenerString != null)
+                            mListenerString.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        mListenerString.onError(anError.getErrorDetail().toString());
                     }
                 });
     }

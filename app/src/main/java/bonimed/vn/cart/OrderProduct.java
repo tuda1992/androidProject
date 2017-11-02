@@ -3,6 +3,8 @@ package bonimed.vn.cart;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import bonimed.vn.products.DataProduct;
+
 /**
  * Created by acv on 11/1/17.
  */
@@ -84,5 +86,29 @@ public class OrderProduct {
     @SerializedName("ReturnQty")
     @Expose
     public Integer returnQty;
+
+    public OrderProduct(DataProduct dataProduct) {
+        this.productId = dataProduct.id;
+        this.productName = dataProduct.productName;
+        this.description = dataProduct.description;
+        this.salePrice = (double) dataProduct.salePrice;
+        this.quantity = dataProduct.orderQuantity;
+        this.imageFullPath = dataProduct.imageFullPath;
+        this.productType = dataProduct.productType;
+        this.sellerId = dataProduct.sellerId;
+        this.sellerName = dataProduct.sellerName;
+        this.company = dataProduct.company;
+        this.quota = dataProduct.quantity;
+        this.isVAT = dataProduct.isVAT;
+        this.sortOrder = 1;
+        this.originalOlCnt = 0;
+        this.status = dataProduct.status;
+        this.totalReturnQuantity = 0;
+        this.returnQty = 0;
+    }
+
+    public OrderProduct() {
+    }
+
 
 }

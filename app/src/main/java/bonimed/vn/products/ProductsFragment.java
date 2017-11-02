@@ -22,6 +22,8 @@ import bonimed.vn.MainActivity;
 import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseFragment;
+import bonimed.vn.cart.OrderLines;
+import bonimed.vn.cart.OrderProduct;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
@@ -43,7 +45,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private List<DataProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     //    private List<OrderDataProduct> mListOrder = new ArrayList<>();
-    private List<DataProduct> mListOrder = new ArrayList<>();
+    private List<OrderProduct> mListOrder = new ArrayList<>();
     private int mCurrentPage = 1;
     private int mTotalProduct;
     private String mSearch = "";
@@ -99,10 +101,10 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
         String orderProduct = PrefManager.getJsonObjectOrderProduct(getActivity());
         if (!TextUtils.isEmpty(orderProduct)) {
-            ListOrderDataProduct listOrderDataProduct = mGson.fromJson(orderProduct, ListOrderDataProduct.class);
-            if (listOrderDataProduct != null && listOrderDataProduct.orderList != null) {
+            OrderLines orderLines = mGson.fromJson(orderProduct, OrderLines.class);
+            if (orderLines != null && orderLines.orderList != null) {
                 mListOrder.clear();
-                mListOrder.addAll(listOrderDataProduct.orderList);
+                mListOrder.addAll(orderLines.orderList);
             }
         }
 
@@ -133,8 +135,8 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
                         if (mCurrentPage <= resultProduct.pagination.pageCount) {
                             mCurrentPage++;
                             for (DataProduct item : resultProduct.data) {
-                                for (DataProduct childItem : mListOrder) {
-                                    if (item.id.equalsIgnoreCase(childItem.id)) {
+                                for (OrderProduct childItem : mListOrder) {
+                                    if (item.id.equalsIgnoreCase(childItem.productId)) {
                                         item.isChecked = true;
                                     }
                                 }
@@ -194,21 +196,23 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             if (!item.isChecked) {
                 Toast.makeText(getActivity(), getString(R.string.toast_remove_product), Toast.LENGTH_SHORT).show();
                 for (int i = 0; i < mListOrder.size(); i++) {
-                    if (item.id.equalsIgnoreCase(mListOrder.get(i).id)) {
+                    if (item.id.equalsIgnoreCase(mListOrder.get(i).productId)) {
                         mListOrder.remove(i);
                     }
                 }
             } else {
                 Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
-                mListOrder.add(item);
+                OrderProduct orderProduct = new OrderProduct(item);
+                mListOrder.add(orderProduct);
             }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
-            mListOrder.add(item);
+            OrderProduct orderProduct = new OrderProduct(item);
+            mListOrder.add(orderProduct);
         }
-        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
-        listOrderDataProduct.orderList = mListOrder;
-        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
+        OrderLines orderLines = new OrderLines();
+        orderLines.orderList = mListOrder;
+        String orderList = mGson.toJson(orderLines);
         PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
 
     }

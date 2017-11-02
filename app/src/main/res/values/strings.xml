@@ -65,5 +65,7 @@
     <string name="text_positive">Đồng ý</string>
     <string name="text_negative">Không</string>
 
+    <string name="order_success">Đặt hàng thành công!!!</string>
+
 
 </resources>
