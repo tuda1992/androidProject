@@ -42,7 +42,8 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private EndlessRecyclerViewScrollListener mScrollListener;
     private List<DataProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
-    private List<OrderDataProduct> mListOrder = new ArrayList<>();
+    //    private List<OrderDataProduct> mListOrder = new ArrayList<>();
+    private List<DataProduct> mListOrder = new ArrayList<>();
     private int mCurrentPage = 1;
     private int mTotalProduct;
     private String mSearch = "";
@@ -97,9 +98,9 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mRv.setAdapter(mProductsAdapter);
 
         String orderProduct = PrefManager.getJsonObjectOrderProduct(getActivity());
-        if (!TextUtils.isEmpty(orderProduct)){
+        if (!TextUtils.isEmpty(orderProduct)) {
             ListOrderDataProduct listOrderDataProduct = mGson.fromJson(orderProduct, ListOrderDataProduct.class);
-            if (listOrderDataProduct != null && listOrderDataProduct.orderList != null){
+            if (listOrderDataProduct != null && listOrderDataProduct.orderList != null) {
                 mListOrder.clear();
                 mListOrder.addAll(listOrderDataProduct.orderList);
             }
@@ -131,7 +132,14 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
                     if (resultProduct.data != null && resultProduct.data.size() > 0) {
                         if (mCurrentPage <= resultProduct.pagination.pageCount) {
                             mCurrentPage++;
-                            mListData.addAll(resultProduct.data);
+                            for (DataProduct item : resultProduct.data) {
+                                for (DataProduct childItem : mListOrder) {
+                                    if (item.id.equalsIgnoreCase(childItem.id)) {
+                                        item.isChecked = true;
+                                    }
+                                }
+                                mListData.add(item);
+                            }
                             mProductsAdapter.notifyDataSetChanged();
                             mListSearch.clear();
                             mListSearch.addAll(resultProduct.data);
@@ -153,35 +161,56 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
     @Override
     public void onClickPurchase(DataProduct item) {
-        Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
-        OrderDataProduct itemData = null;
+
+//        OrderDataProduct itemData = null;
+//        if (mListOrder.size() > 0) {
+//            for (int i = 0; i < mListOrder.size(); i++) {
+//                if (item.id.equalsIgnoreCase(mListOrder.get(i).dataProduct.id)) {
+//                    mListOrder.get(i).orderQuantity++;
+//                    mIsExist = true;
+//                    break;
+//                } else {
+//                    mIsExist = false;
+//                }
+//            }
+//        } else {
+//            mIsExist = true;
+//            itemData = new OrderDataProduct();
+//            itemData.orderQuantity = 1;
+//            itemData.dataProduct = item;
+//            mListOrder.add(itemData);
+//        }
+//        if (!mIsExist) {
+//            itemData = new OrderDataProduct();
+//            itemData.orderQuantity = 1;
+//            itemData.dataProduct = item;
+//            mListOrder.add(itemData);
+//        }
+//        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
+//        listOrderDataProduct.orderList = mListOrder;
+//        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
+//        PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
         if (mListOrder.size() > 0) {
-            for (int i = 0; i < mListOrder.size(); i++) {
-                if (item.id.equalsIgnoreCase(mListOrder.get(i).dataProduct.id)) {
-                    mListOrder.get(i).orderQuantity++;
-                    mIsExist = true;
-                    break;
-                } else {
-                    mIsExist = false;
+            if (!item.isChecked) {
+                Toast.makeText(getActivity(), getString(R.string.toast_remove_product), Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < mListOrder.size(); i++) {
+                    if (item.id.equalsIgnoreCase(mListOrder.get(i).id)) {
+                        mListOrder.remove(i);
+                    }
                 }
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
+                mListOrder.add(item);
             }
         } else {
-            mIsExist = true;
-            itemData = new OrderDataProduct();
-            itemData.orderQuantity = 1;
-            itemData.dataProduct = item;
-            mListOrder.add(itemData);
-        }
-        if (!mIsExist) {
-            itemData = new OrderDataProduct();
-            itemData.orderQuantity = 1;
-            itemData.dataProduct = item;
-            mListOrder.add(itemData);
+            Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
+            mListOrder.add(item);
         }
         ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
         listOrderDataProduct.orderList = mListOrder;
         String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
         PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
+
     }
 
     @Override

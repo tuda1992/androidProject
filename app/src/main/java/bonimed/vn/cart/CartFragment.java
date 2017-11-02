@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -22,6 +23,7 @@ import bonimed.vn.MainActivity;
 import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseFragment;
+import bonimed.vn.listener.DialogTwoButtonCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.ListOrderDataProduct;
@@ -29,6 +31,7 @@ import bonimed.vn.products.OrderDataProduct;
 import bonimed.vn.products.Products;
 import bonimed.vn.products.ProductsAdapter;
 import bonimed.vn.products.ResultProduct;
+import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.Utils;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
@@ -46,12 +49,14 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private RelativeLayout mRlSave, mRlCancel;
     private SearchLayout mSearchLayout;
     private CartAdapter mCartAdapter;
-    private List<OrderDataProduct> mListData = new ArrayList<>();
+    //    private List<OrderDataProduct> mListData = new ArrayList<>();
+    private List<DataProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
     private String mStrOrder;
     private Gson mGson;
     private String mSearch = "";
+    private boolean mIsExist;
 
     @Override
     protected int getLayoutView() {
@@ -70,6 +75,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         mSearchLayout = (SearchLayout) view.findViewById(R.id.search_layout);
         mSearchLayout.setResourceForBtnSearch();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
+
     }
 
     @Override
@@ -94,9 +100,19 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                 mListData.clear();
                 mListData.addAll(listOrderDataProduct.orderList);
                 mCartAdapter.notifyDataSetChanged();
+                if (mListData.size() == 0) {
+                    priceWhenNoData();
+                }
             }
+        } else {
+            priceWhenNoData();
         }
+    }
 
+    private void priceWhenNoData() {
+        mTvProductMoney.setText(Utils.convertToCurrencyStr(0));
+        mTvTotalMoney.setText(Utils.convertToCurrencyStr(0));
+        mTvServiceMoney.setText(Utils.convertToCurrencyStr(0));
     }
 
     @Override
@@ -112,18 +128,57 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
 
     @Override
     public void OnItemClick(DataProduct item) {
+        mSearch = item.productName;
+        callApiProducts();
+        if (mListData.size() > 0) {
+            for (int i = 0; i < mListData.size(); i++) {
+                if (item.id.equalsIgnoreCase(mListData.get(i).id)) {
+                    mListData.get(i).orderQuantity++;
+                    mIsExist = true;
+                    break;
+                } else {
+                    mIsExist = false;
+                }
+            }
+        } else {
+            mIsExist = true;
+        }
 
+        if (!mIsExist) {
+            mIsExist = true;
+            mListData.add(item);
+        }
+
+        mCartAdapter.updateSalePrice();
+
+        updateTitle();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_save:
+//                OrderLines orderLines = new OrderLines();
                 break;
             case R.id.rl_cancel:
-                PrefManager.removeJsonObjectOrderProduct(getActivity());
-                mListData.clear();
-                mCartAdapter.notifyDataSetChanged();
+                if (isAdded()) {
+                    DialogUtil.showAlertDialogButtonClicked(getActivity(), getString(R.string.title_remove_cart)
+                            , getString(R.string.message_remove_cart), getString(R.string.text_positive), getString(R.string.text_negative), new DialogTwoButtonCallBackListener() {
+                                @Override
+                                public void onPositiveButtonClick() {
+                                    PrefManager.removeJsonObjectOrderProduct(getActivity());
+                                    mListData.clear();
+                                    mCartAdapter.notifyDataSetChanged();
+                                    priceWhenNoData();
+                                    ((MainActivity) getActivity()).setTitleForCart(0);
+                                }
+
+                                @Override
+                                public void onNegativeButtonClick() {
+
+                                }
+                            });
+                }
                 break;
         }
     }
@@ -163,13 +218,40 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     }
 
     @Override
-    public void onClickItemCancel(OrderDataProduct product) {
-        mListData.remove(product);
+    public void onClickItemCancel(final DataProduct product) {
+        if (isAdded()) {
+            DialogUtil.showAlertDialogButtonClicked(getActivity(), getString(R.string.title_remove_product)
+                    , getString(R.string.message_remove_product), getString(R.string.text_positive), getString(R.string.text_negative), new DialogTwoButtonCallBackListener() {
+                        @Override
+                        public void onPositiveButtonClick() {
+                            mListData.remove(product);
+                            mCartAdapter.updateSalePrice();
+                            updateTitle();
+                        }
+
+                        @Override
+                        public void onNegativeButtonClick() {
+
+                        }
+                    });
+        }
+    }
+
+    private void updateTitle() {
+        int quantity = 0;
+        if (mListData.size() > 0) {
+            for (int i = 0; i < mListData.size(); i++) {
+                quantity += mListData.get(i).orderQuantity;
+            }
+        }
+        ((MainActivity) getActivity()).setTitleForCart(quantity);
     }
 
     @Override
-    public void onInputQuantityChanged (int totalPrice) {
+    public void onInputQuantityChanged(int totalPrice) {
         mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
+        mTvTotalMoney.setText(Utils.convertToCurrencyStr(totalPrice + 20000));
+        updateTitle();
     }
 
     @Override

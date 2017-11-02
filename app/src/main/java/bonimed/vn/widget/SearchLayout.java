@@ -44,6 +44,8 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
     @Override
     public void onItemClick(DataProduct item) {
         if (mSearchCallBackListener != null) {
+            mEdtInput.setText(item.productName);
+            mEdtInput.setSelection(mEdtInput.getText().length());
             mEdtInput.dismissDropDown();
             mSearchCallBackListener.OnItemClick(item);
         }
@@ -119,5 +121,6 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
 
     public void setResourceForBtnSearch() {
         mIvSearch.setImageResource(R.drawable.ic_cart);
+        mEdtInput.setHint(getResources().getString(R.string.input_text_hint_cart));
     }
 }

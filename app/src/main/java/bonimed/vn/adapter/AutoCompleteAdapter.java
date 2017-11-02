@@ -63,9 +63,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<DataProduct> {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    if (mNameProduct != null) {
-                        mNameProduct.setText(customer.productName);
-                    }
                     mListener.onItemClick(customer);
                 }
             }

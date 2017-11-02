@@ -104,7 +104,18 @@
             android:layout_centerInParent="true"
             android:background="@drawable/effect_button"
             android:padding="@dimen/_5sdp"
-            android:src="@drawable/ic_cart" />
+            android:src="@drawable/ic_cart"
+            android:visibility="gone" />
+
+
+        <CheckBox
+            android:id="@+id/cb_purchase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:buttonTint="@color/colorAccent"
+            android:gravity="center" />
+
 
     </RelativeLayout>
 

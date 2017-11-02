@@ -19,6 +19,7 @@
     <string name="title_orders">Danh sách đơn hàng</string>
 
     <string name="input_text_hint">Nhập tên sản phẩm bạn muốn tìm</string>
+    <string name="input_text_hint_cart">Nhập tên sản phẩm bạn muốn thêm vào giỏ</string>
 
     <string name="hot_line">Hotline : 0973 446 447</string>
     <string name="welcome">Welcome</string>
@@ -49,10 +50,20 @@
     <string name="error_connection_message">Hãy truy cập Internet rồi thử lại nhé</string>
 
     <string name="toast_order_product">Sản phẩm này đã được thêm vào giỏ hàng</string>
+    <string name="toast_remove_product">Sản phẩm này đã bị xoá khỏi giỏ hàng</string>
 
 
     <string name="information_product">Thông tin sản phẩm</string>
     <string name="purchase_product">Mua hàng</string>
     <string name="price_product">Đơn giá</string>
+
+
+    <string name="title_remove_cart">Huỷ đơn hàng</string>
+    <string name="title_remove_product">Huỷ sản phẩm</string>
+    <string name="message_remove_product">Bạn muốn xoá sản  phẩm khỏi đơn hàng phải không?</string>
+    <string name="message_remove_cart">Bạn muốn huỷ đơn hàng này phải không?</string>
+    <string name="text_positive">Đồng ý</string>
+    <string name="text_negative">Không</string>
+
 
 </resources>

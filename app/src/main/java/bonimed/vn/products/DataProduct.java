@@ -93,4 +93,7 @@ public class DataProduct {
     @SerializedName("SecurityToken")
     @Expose
     public String securityToken;
+
+    public boolean isChecked;
+    public Integer orderQuantity = 1;
 }

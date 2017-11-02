@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
                 setVisibleActionSearch(false);
                 fragment = new CartFragment();
                 nameFragment = Constants.CART_FRAGMENT;
-                title = getString(R.string.title_cart) + "( " + quantity + " Sản phẩm )";
+                setTitleForCart(quantity);
                 break;
             case 2:
                 setVisibleActionSearch(false);
@@ -117,7 +117,16 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         if (fragment != null) {
             // set the toolbar title
             startFragment(fragment, nameFragment);
-            getSupportActionBar().setTitle(title);
+            if (position != 1)
+                getSupportActionBar().setTitle(title);
+        }
+    }
+
+    public void setTitleForCart(int quantity) {
+      if (quantity <= 0) {
+            getSupportActionBar().setTitle(getString(R.string.title_cart));
+        } else {
+            getSupportActionBar().setTitle(getString(R.string.title_cart) + "( " + quantity + " sản phẩm )");
         }
     }
 

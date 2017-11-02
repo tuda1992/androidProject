@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import bonimed.vn.R;
+import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.OrderDataProduct;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.Utils;
@@ -30,21 +31,22 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
-    private List<OrderDataProduct> mResultData;
-    private int mTotalPrice = 0;
-//    private String[] mDataset = new String[20];
+    //    private List<OrderDataProduct> mResultData;
+    private List<DataProduct> mResultData;
+    private int mTotalPrice;
 
     public interface ItemClickCallBackListener {
-        void onClickItemCancel(OrderDataProduct item);
+        void onClickItemCancel(DataProduct item);
 
         void onInputQuantityChanged(int totalPrice);
     }
 
 
-    public CartAdapter(Context context, List<OrderDataProduct> resultData, ItemClickCallBackListener listener) {
+    public CartAdapter(Context context, List<DataProduct> resultData, ItemClickCallBackListener listener) {
         this.mContext = context;
         this.mItemClickCallBackListener = listener;
         this.mResultData = resultData;
+        this.mTotalPrice = 0;
     }
 
     @Override
@@ -74,14 +76,22 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mEdtNumber.addTextChangedListener(mMyCustomEditTextListener);
         }
 
-        public void setData(OrderDataProduct item, int position) {
-            mTvProductName.setText(item.dataProduct.productName);
-            Picasso.with(mContext).load(Constants.URL_BONIMED + item.dataProduct.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
-            mTvProductUnit.setText(item.dataProduct.description);
-            mMyCustomEditTextListener.updatePosition(position, mTvTotalPrice, item.dataProduct.salePrice.intValue());
+        public void setData(final DataProduct item, int position) {
+            mTvProductName.setText(item.productName);
+            Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
+            mTvProductUnit.setText(item.description);
+            mMyCustomEditTextListener.updatePosition(position, mTvTotalPrice, item.salePrice.intValue());
             mEdtNumber.setText(item.orderQuantity.intValue() + "");
-            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.orderQuantity.intValue() * item.dataProduct.salePrice.intValue()));
-            mTvPrice.setText(Utils.convertToCurrencyStr(item.dataProduct.salePrice));
+            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.orderQuantity.intValue() * item.salePrice.intValue()));
+            mTvPrice.setText(Utils.convertToCurrencyStr(item.salePrice));
+            mEdtNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean b) {
+                    if (!b){
+                        mEdtNumber.setText(item.orderQuantity.intValue() + "");
+                    }
+                }
+            });
         }
 
         @Override
@@ -127,9 +137,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             if (!TextUtils.isEmpty(charSequence.toString())) {
-                mResultData.get(position).orderQuantity = Integer.valueOf(charSequence.toString());
+                if (Integer.valueOf(charSequence.toString()) > mResultData.get(position).quantity) {
+                    mResultData.get(position).orderQuantity = mResultData.get(position).quantity;
+                } else {
+                    mResultData.get(position).orderQuantity = Integer.valueOf(charSequence.toString());
+                }
                 mTvTotal.setText(Utils.convertToCurrencyStr(mResultData.get(position).orderQuantity * mPrice));
-                mTotalPrice += mResultData.get(position).orderQuantity * mResultData.get(position).dataProduct.salePrice;
+                mTotalPrice += mResultData.get(position).orderQuantity * mResultData.get(position).salePrice;
                 if (mItemClickCallBackListener != null)
                     mItemClickCallBackListener.onInputQuantityChanged(mTotalPrice);
             }
@@ -138,6 +152,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         @Override
         public void afterTextChanged(Editable editable) {
         }
+    }
+
+    public void updateSalePrice() {
+        mTotalPrice = 0;
+        notifyDataSetChanged();
     }
 
 }

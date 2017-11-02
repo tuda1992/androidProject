@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,8 +50,9 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private RelativeLayout mRlPurchase, mRlDetail;
-        private ImageView mIvProduct,mIvPurchase;
-        private TextView mTvProductName, mTvProductUnit, mTvProductMoney,mTvDetail;
+        private ImageView mIvProduct, mIvPurchase;
+        private TextView mTvProductName, mTvProductUnit, mTvProductMoney, mTvDetail;
+        private CheckBox mCheckBox;
 
         public ViewHolder(View v) {
             super(v);
@@ -61,17 +64,37 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             mTvProductUnit = (TextView) v.findViewById(R.id.tv_product_unit);
             mTvProductMoney = (TextView) v.findViewById(R.id.tv_product_money);
             mTvDetail = (TextView) v.findViewById(R.id.tv_detail);
+            mCheckBox = (CheckBox) v.findViewById(R.id.cb_purchase);
 
             mIvPurchase.setOnClickListener(this);
             mTvDetail.setOnClickListener(this);
 
+
         }
 
-        public void setData(DataProduct item) {
+        public void setData(final DataProduct item, final int position) {
             mTvProductName.setText(item.productName);
             mTvProductUnit.setText(item.description);
             mTvProductMoney.setText(Utils.convertToCurrencyStr(item.salePrice.intValue()));
             Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
+
+            //in some cases, it will prevent unwanted situations
+            mCheckBox.setOnCheckedChangeListener(null);
+
+            //if true, your checkbox will be selected, else unselected
+            mCheckBox.setChecked(mResultData.get(position).isChecked);
+
+            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mResultData.get(position).isChecked = isChecked;
+                    if (mItemClickCallBackListener != null) {
+                        mItemClickCallBackListener.onClickPurchase(mResultData.get(getAdapterPosition()));
+                    }
+                }
+            });
+
+
         }
 
         @Override
@@ -99,7 +122,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setData(mResultData.get(position));
+        holder.setData(mResultData.get(position), position);
     }
 
 }
