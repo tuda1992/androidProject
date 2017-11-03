@@ -117,6 +117,29 @@ public class FastNetworking {
                 });
     }
 
+    public void callApiOrderList(JSONObject jsonObject, String token) {
+        HashMap<String, String> headers = initCustomContentType();
+        AndroidNetworking.post(BASE_URL + URL_ORDERS)
+                .addHeaders(headers)
+                .addStringBody("application/json")
+                .addQueryParameter(Constants.SECURITY_TOKEN, token)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (mListenerObject != null)
+                            mListenerObject.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        if (mListenerObject != null)
+                            mListenerObject.onError(error.getErrorBody().toString());
+                    }
+                });
+    }
+
     public void callApiUpload(JSONObject jsonObject, String token) {
         HashMap<String, String> headers = initCustomContentType();
         AndroidNetworking.post(BASE_URL + URL_ORDERS_CREATE)

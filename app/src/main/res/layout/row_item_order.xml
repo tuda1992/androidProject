@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_25sdp"
+        android:layout_height="@dimen/_30sdp"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -22,7 +22,7 @@
                 android:layout_centerInParent="true"
                 android:text="@string/code_bill"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
         </RelativeLayout>
 
@@ -40,7 +40,7 @@
                 android:layout_centerInParent="true"
                 android:text="@string/date_purchase"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
         </RelativeLayout>
 
@@ -57,14 +57,14 @@
                 android:layout_centerInParent="true"
                 android:text="@string/total_money_bill"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_weight="0.5"
             android:background="@drawable/border_black">
 
             <TextView
@@ -72,11 +72,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@string/detal_bill"
+                android:background="@drawable/effect_button"
                 android:padding="@dimen/_3sdp"
-                android:background="@color/colorAccent"
+                android:text="@string/detal_bill"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_9sdp" />
 
         </RelativeLayout>
 

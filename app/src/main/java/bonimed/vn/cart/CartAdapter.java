@@ -83,7 +83,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mMyCustomEditTextListener.updatePosition(position);
             mEdtNumber.setText(item.quantity.intValue() + "");
             mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
-            mTvPrice.setText(Utils.convertToCurrencyStr(item.salePrice.intValue()));
+            mTvPrice.setText("Đơn giá : " + Utils.convertToCurrencyStr(item.salePrice.intValue()));
 
             mEdtNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override

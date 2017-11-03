@@ -49,7 +49,6 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private int mCurrentPage = 1;
     private int mTotalProduct;
     private String mSearch = "";
-    private boolean mIsExist;
     private Gson mGson;
 
     @Override
@@ -203,12 +202,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             } else {
                 Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
                 OrderProduct orderProduct = new OrderProduct(item);
-                mListOrder.add(orderProduct);
+                mListOrder.add(0,orderProduct);
             }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
             OrderProduct orderProduct = new OrderProduct(item);
-            mListOrder.add(orderProduct);
+            mListOrder.add(0,orderProduct);
         }
         OrderLines orderLines = new OrderLines();
         orderLines.orderList = mListOrder;
