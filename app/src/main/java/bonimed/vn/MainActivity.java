@@ -26,6 +26,7 @@ import bonimed.vn.orders.OrdersFragment;
 import bonimed.vn.products.ProductsFragment;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.PrefManager;
+import bonimed.vn.util.Utils;
 
 public class MainActivity extends BaseActivity implements FragmentDrawer.FragmentDrawerListener {
 
@@ -72,6 +73,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     public String getSecurityToken() {
         return mUserLogin == null ? "" : mUserLogin.securityToken;
     }
+
     public String getUserId() {
         return mUserLogin == null ? "" : mUserLogin.id;
     }
@@ -131,7 +133,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     }
 
     public void setTitleForCart(int quantity) {
-      if (quantity <= 0) {
+        if (quantity <= 0) {
             getSupportActionBar().setTitle(getString(R.string.title_cart));
         } else {
             getSupportActionBar().setTitle(getString(R.string.title_cart) + "( " + quantity + " sản phẩm )");
@@ -195,17 +197,9 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
             float y = ev.getRawY() + v.getTop() - scrcoords[1];
 
             if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
-                hideKeyboard(this);
+                Utils.hideKeyboard(this, v);
         }
         return super.dispatchTouchEvent(ev);
     }
-
-    public static void hideKeyboard(Activity activity) {
-        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
-        }
-    }
-
 
 }

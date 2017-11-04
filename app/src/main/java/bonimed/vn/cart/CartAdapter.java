@@ -108,6 +108,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     if (mResultData.get(position).quantity < mResultData.get(position).quota) {
                         mResultData.get(position).quantity++;
                         mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
+                        mTvTotalPrice.setText(Utils.convertToCurrencyStr( mResultData.get(position).quantity.intValue() *  mResultData.get(position).salePrice.intValue()));
                         if (mItemClickCallBackListener != null)
                             mItemClickCallBackListener.onInputQuantityChanged();
                     }
@@ -120,6 +121,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     if (mResultData.get(position).quantity >= 2) {
                         mResultData.get(position).quantity--;
                         mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
+                        mTvTotalPrice.setText(Utils.convertToCurrencyStr( mResultData.get(position).quantity.intValue() *  mResultData.get(position).salePrice.intValue()));
                         if (mItemClickCallBackListener != null)
                             mItemClickCallBackListener.onInputQuantityChanged();
                     }

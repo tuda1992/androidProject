@@ -27,6 +27,7 @@ import bonimed.vn.base.BaseActivity;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.PrefManager;
+import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.util.Utils;
 
 /**
@@ -38,6 +39,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private EditText mEdtUsername, mEdtPassword;
     private Button mBtnSignIn;
     private TextView mTvLicenseUrl;
+    private ProgressDialogUtils mProgress;
 
     @Override
     protected int getLayoutView() {
@@ -59,6 +61,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mTvLicenseUrl.setOnClickListener(this);
         mEdtUsername.setOnFocusChangeListener(new MyOnFocusChangeListener());
         mEdtPassword.setOnFocusChangeListener(new MyOnFocusChangeListener());
+        mProgress = new ProgressDialogUtils(this);
     }
 
     @Override
@@ -68,6 +71,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             finish();
             return;
         }
+
     }
 
     @Override
@@ -89,6 +93,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void callApiLogin(String username, String password) {
+        mProgress.showDialog();
         final Gson gson = new Gson();
         UserLogin userLogin = new UserLogin();
         userLogin.userName = username;
@@ -99,6 +104,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             FastNetworking fastNetworking = new FastNetworking(this, new JsonObjectCallBackListener() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
+                    mProgress.hideDialog();
                     UserLogin userLoginSuccess = gson.fromJson(jsonObject.toString(), UserLogin.class);
                     Log.d("TUDA", "user = " + userLoginSuccess);
                     if (userLoginSuccess.securityToken != null) {
@@ -112,11 +118,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                 @Override
                 public void onError(String messageError) {
+                    mProgress.hideDialog();
                 }
             });
             fastNetworking.callApiLogin(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
+            mProgress.hideDialog();
         }
 
     }
@@ -127,28 +135,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         public void onFocusChange(View view, boolean b) {
             if (!b) {
                 Utils.hideKeyboard(LoginActivity.this, view);
-            }
-        }
-    }
-
-    private class MyTextWatcher implements TextWatcher {
-        private View view;
-
-        private MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.edt_username:
-                    validateName();
-                    break;
             }
         }
     }
