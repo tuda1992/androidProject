@@ -39,9 +39,19 @@ public class PrefManager {
         return sharedPreferences.getString(Constants.ORDER_PRODUCT, "");
     }
 
+    public static void putLoginState(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(Constants.LOGIN_STATE, 1).commit();
+    }
+
+    public static int getLoginState(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(Constants.LOGIN_STATE, 0);
+    }
+
     public static void clearAllData(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
-        sharedPreferences.edit().clear().commit();
+        sharedPreferences.edit().clear().apply();
     }
 
 }

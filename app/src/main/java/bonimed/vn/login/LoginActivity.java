@@ -24,8 +24,10 @@ import bonimed.vn.MainActivity;
 import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseActivity;
+import bonimed.vn.listener.DialogTwoButtonCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.util.Constants;
+import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.util.Utils;
@@ -66,7 +68,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initDatas(Bundle saveInstanceStatte) {
-        if (!TextUtils.isEmpty(PrefManager.getJsonObjectUserLogin(LoginActivity.this))) {
+        if (PrefManager.getLoginState(LoginActivity.this) == 1) {
             startActivityAnim(MainActivity.class, null);
             finish();
             return;
@@ -103,16 +105,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             JSONObject jsonObject = new JSONObject(json);
             FastNetworking fastNetworking = new FastNetworking(this, new JsonObjectCallBackListener() {
                 @Override
-                public void onResponse(JSONObject jsonObject) {
+                public void onResponse(final JSONObject jsonObject) {
                     mProgress.hideDialog();
                     UserLogin userLoginSuccess = gson.fromJson(jsonObject.toString(), UserLogin.class);
                     Log.d("TUDA", "user = " + userLoginSuccess);
                     if (userLoginSuccess.securityToken != null) {
-                        PrefManager.putJsonObjectUserLogin(LoginActivity.this, jsonObject.toString());
-                        startActivityAnim(MainActivity.class, null);
-                        finish();
-                    } else {
+                        DialogUtil.showAlertDialogButtonClicked(LoginActivity.this, ""
+                                , getString(R.string.message_save_data), getString(R.string.text_positive), getString(R.string.text_negative), new DialogTwoButtonCallBackListener() {
+                                    @Override
+                                    public void onPositiveButtonClick() {
+                                        PrefManager.putLoginState(LoginActivity.this);
+                                        loginSuccess(jsonObject.toString());
+                                    }
 
+                                    @Override
+                                    public void onNegativeButtonClick() {
+                                        loginSuccess(jsonObject.toString());
+                                    }
+                                });
                     }
                 }
 
@@ -126,7 +136,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             e.printStackTrace();
             mProgress.hideDialog();
         }
+    }
 
+    private void loginSuccess(String jsonObject) {
+        PrefManager.putJsonObjectUserLogin(LoginActivity.this, jsonObject);
+        startActivityAnim(MainActivity.class, null);
+        finish();
     }
 
     private class MyOnFocusChangeListener implements View.OnFocusChangeListener {

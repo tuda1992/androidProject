@@ -116,7 +116,25 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
 
     @Override
     public void OnActionSearch(String input) {
-
+        if (mListData.size() > 0) {
+            for (int i = 0; i < mListData.size(); i++) {
+                if (input.equalsIgnoreCase(mListData.get(i).productName)) {
+                    mListData.get(i).quantity++;
+                    mIsExist = true;
+                    break;
+                } else {
+                    mIsExist = false;
+                }
+            }
+        } else {
+            mIsExist = false;
+        }
+        if (!mIsExist){
+            OrderProduct orderProduct = new OrderProduct(input);
+            mListData.add(orderProduct);
+        }
+        mCartAdapter.notifyDataSetChanged();
+        updateTitle();
     }
 
     @Override
@@ -202,6 +220,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                         mCartAdapter.notifyDataSetChanged();
                         PrefManager.removeJsonObjectOrderProduct(getActivity());
                         priceWhenNoData();
+                        ((MainActivity) getActivity()).setTitleForCart(0);
                     } else {
 
                     }
@@ -292,7 +311,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private void updateSalePrice() {
         int totalPrice = 0;
         for (OrderProduct item : mListData) {
-            totalPrice += item.quantity * item.salePrice;
+            totalPrice += item.quantity * item.salePrice.intValue();
         }
         mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
         if (totalPrice == 0) {

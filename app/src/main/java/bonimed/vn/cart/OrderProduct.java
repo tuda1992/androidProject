@@ -109,6 +109,24 @@ public class OrderProduct {
 
     public OrderProduct() {
     }
-
+    public OrderProduct(String productName) {
+        this.productId = "ADMIN_" + productName;
+        this.productName = productName;
+        this.description = "";
+        this.salePrice = (double) 0;
+        this.quantity = 1;
+        this.imageFullPath ="";
+        this.productType = 2;
+        this.sellerId = "";
+        this.sellerName = "";
+        this.company = "";
+        this.quota = 0;
+        this.isVAT = false;
+        this.sortOrder = 1;
+        this.originalOlCnt = 0;
+        this.status = 1;
+        this.totalReturnQuantity = 0;
+        this.returnQty = 0;
+    }
 
 }

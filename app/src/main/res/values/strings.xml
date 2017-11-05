@@ -6,12 +6,16 @@
     <string name="nav_item_products">Danh sách sản phẩm</string>
     <string name="nav_item_cart">Giỏ hàng</string>
     <string name="nav_item_orders">Danh sách đơn hàng</string>
+    <string name="nav_item_call">Liên hệ : 098 268 5888</string>
+    <string name="nav_item_logout">Đăng xuất</string>
 
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_products</item>
         <item>@string/nav_item_cart</item>
         <item>@string/nav_item_orders</item>
+        <item>@string/nav_item_call</item>
+        <item>@string/nav_item_logout</item>
     </string-array>
 
     <string name="title_products">Danh sách sản phẩm</string>
@@ -64,6 +68,8 @@
     <string name="message_remove_cart">Bạn muốn huỷ đơn hàng này phải không?</string>
     <string name="text_positive">Đồng ý</string>
     <string name="text_negative">Không</string>
+
+    <string name="message_save_data">Bạn có muốn lưu tài khoản trên máy không?</string>
 
     <string name="order_success">Đặt hàng thành công!!!</string>
 

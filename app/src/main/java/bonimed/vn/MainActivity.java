@@ -1,7 +1,14 @@
 package bonimed.vn;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +27,7 @@ import com.google.gson.Gson;
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.cart.CartFragment;
 import bonimed.vn.cart.OrderLines;
+import bonimed.vn.login.LoginActivity;
 import bonimed.vn.login.UserLogin;
 import bonimed.vn.navigationdrawer.FragmentDrawer;
 import bonimed.vn.orders.OrdersFragment;
@@ -30,6 +38,7 @@ import bonimed.vn.util.Utils;
 
 public class MainActivity extends BaseActivity implements FragmentDrawer.FragmentDrawerListener {
 
+    private final int CALL_ACTION = 9999;
     private Toolbar mToolbar;
     private FragmentDrawer mDrawerFragment;
     private int mCurrentTab = -1;
@@ -84,7 +93,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     }
 
     private void displayView(int position) {
-        if (mCurrentTab == position) {
+        if (mCurrentTab == position && mCurrentTab!=3) {
             return;
         }
         mCurrentTab = position;
@@ -119,6 +128,14 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
                 fragment = new OrdersFragment();
                 nameFragment = Constants.ORDERS_FRAGMENT;
                 title = getString(R.string.title_orders);
+                break;
+            case 3:
+                callAction();
+                break;
+            case 4:
+                PrefManager.clearAllData(this);
+                startActivityAnim(LoginActivity.class, null);
+                finish();
                 break;
             default:
                 break;
@@ -201,5 +218,36 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         }
         return super.dispatchTouchEvent(ev);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    callAction();
+                }
+                return;
+            }
+        }
+    }
+
+    public void callAction() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.CALL_PHONE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:0982685888"));
+                startActivity(callIntent);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_ACTION);
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:0982685888"));
+            startActivity(callIntent);
+        }
+    }
+
 
 }

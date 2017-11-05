@@ -44,12 +44,22 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void onBindViewHolder(MyViewHolder holder, int position) {
         NavDrawerItem current = data.get(position);
         holder.mTvTitle.setText(current.getTitle());
-        if (position == 0){
-            holder.mIvIcon.setImageResource(R.drawable.ic_product);
-        }else if (position == 1){
-            holder.mIvIcon.setImageResource(R.drawable.ic_cart);
-        }else {
-            holder.mIvIcon.setImageResource(R.drawable.icon_order);
+        switch (position){
+            case 0:
+                holder.mIvIcon.setImageResource(R.drawable.ic_product);
+                break;
+            case 1:
+                holder.mIvIcon.setImageResource(R.drawable.ic_cart);
+                break;
+            case 2:
+                holder.mIvIcon.setImageResource(R.drawable.ic_order);
+                break;
+            case 3:
+                holder.mIvIcon.setImageResource(R.drawable.ic_call);
+                break;
+            case 4:
+                holder.mIvIcon.setImageResource(R.drawable.ic_logout);
+                break;
         }
     }
 

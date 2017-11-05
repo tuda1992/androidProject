@@ -82,19 +82,29 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mTvProductUnit.setText(item.description);
             mMyCustomEditTextListener.updatePosition(position);
             mEdtNumber.setText(item.quantity.intValue() + "");
-            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
-            mTvPrice.setText("Đơn giá : " + Utils.convertToCurrencyStr(item.salePrice.intValue()));
+            if (item.salePrice.intValue() != 0) {
+                mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
+                mTvPrice.setText("Đơn giá : " + Utils.convertToCurrencyStr(item.salePrice.intValue()));
+            }
 
             mEdtNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean b) {
                     if (!b) {
-                        if (item.quantity.intValue() >= item.quota.intValue()) {
-                            mEdtNumber.setText(item.quota.intValue() + "");
-                            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quota.intValue() * item.salePrice.intValue()));
-                        } else {
+                        if (item.quota.intValue() != 0){
+                            if (item.quantity.intValue() >= item.quota.intValue()) {
+                                mEdtNumber.setText(item.quota.intValue() + "");
+                                if (item.salePrice != null) {
+                                    mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quota.intValue() * item.salePrice.intValue()));
+                                }
+                            } else {
+                                mEdtNumber.setText(item.quantity.intValue() + "");
+                                if (item.salePrice != null) {
+                                    mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
+                                }
+                            }
+                        }else {
                             mEdtNumber.setText(item.quantity.intValue() + "");
-                            mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
                         }
                         if (mItemClickCallBackListener != null)
                             mItemClickCallBackListener.onInputQuantityChanged();
@@ -105,13 +115,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mIvAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mResultData.get(position).quantity < mResultData.get(position).quota) {
+                    if (mResultData.get(position).quota.intValue() != 0) {
+                        if (mResultData.get(position).quantity < mResultData.get(position).quota) {
+                            mResultData.get(position).quantity++;
+                            mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
+                            if (mResultData.get(position).salePrice != null) {
+                                mTvTotalPrice.setText(Utils.convertToCurrencyStr(mResultData.get(position).quantity.intValue() * mResultData.get(position).salePrice.intValue()));
+                            }
+                        }
+                    } else {
                         mResultData.get(position).quantity++;
                         mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
-                        mTvTotalPrice.setText(Utils.convertToCurrencyStr( mResultData.get(position).quantity.intValue() *  mResultData.get(position).salePrice.intValue()));
-                        if (mItemClickCallBackListener != null)
-                            mItemClickCallBackListener.onInputQuantityChanged();
                     }
+                    if (mItemClickCallBackListener != null)
+                        mItemClickCallBackListener.onInputQuantityChanged();
                 }
             });
 
@@ -121,7 +138,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     if (mResultData.get(position).quantity >= 2) {
                         mResultData.get(position).quantity--;
                         mEdtNumber.setText(mResultData.get(position).quantity.intValue() + "");
-                        mTvTotalPrice.setText(Utils.convertToCurrencyStr( mResultData.get(position).quantity.intValue() *  mResultData.get(position).salePrice.intValue()));
+                        if (mResultData.get(position).salePrice.intValue() != 0) {
+                            mTvTotalPrice.setText(Utils.convertToCurrencyStr(mResultData.get(position).quantity.intValue() * mResultData.get(position).salePrice.intValue()));
+                        }
                         if (mItemClickCallBackListener != null)
                             mItemClickCallBackListener.onInputQuantityChanged();
                     }
