@@ -25,7 +25,10 @@ import bonimed.vn.base.BaseFragment;
 import bonimed.vn.cart.OrderLines;
 import bonimed.vn.cart.OrderProduct;
 import bonimed.vn.listener.JsonObjectCallBackListener;
+import bonimed.vn.util.DialogUtil;
+import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
+import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
 
@@ -44,12 +47,11 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private EndlessRecyclerViewScrollListener mScrollListener;
     private List<DataProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
-    //    private List<OrderDataProduct> mListOrder = new ArrayList<>();
     private List<OrderProduct> mListOrder = new ArrayList<>();
     private int mCurrentPage = 1;
-    private int mTotalProduct;
     private String mSearch = "";
     private Gson mGson;
+    private ProgressDialogUtils mProgress;
 
     @Override
     protected int getLayoutView() {
@@ -70,7 +72,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mScrollListener = new EndlessRecyclerViewScrollListener(mLinearLayoutManager) {
             @Override
             public void onLoadMore(int page) {
-                callApiProducts();
+                callApiProducts(false);
             }
         };
 
@@ -83,11 +85,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
                 mCurrentPage = 1;
                 mSearch = "";
                 mListData.clear();
-                callApiProducts();
+                callApiProducts(false);
 
             }
         });
         mSearchLayout.setListener(this);
+        mProgress = new ProgressDialogUtils(getActivity());
     }
 
     @Override
@@ -107,10 +110,20 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             }
         }
 
-        callApiProducts();
+        callApiProducts(true);
     }
 
-    private void callApiProducts() {
+    private void callApiProducts(boolean isShowProgress) {
+        if (!Network.isOnline(getActivity())) {
+            DialogUtil.showAlertDialogOneButtonClicked(getActivity(), getString(R.string.title_no_connection)
+                    , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+            return;
+        }
+
+        if (isShowProgress) {
+            mProgress.showDialog();
+        }
+
         final Gson gson = new Gson();
         Products products = new Products();
         products.pageIndex = mCurrentPage;
@@ -126,6 +139,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             FastNetworking fastNetworking = new FastNetworking(getActivity(), new JsonObjectCallBackListener() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
+                    mProgress.hideDialog();
                     mSwipe.setRefreshing(false);
                     ResultProduct resultProduct = gson.fromJson(jsonObject.toString(), ResultProduct.class);
                     mTvTotal.setText(getString(R.string.text_total) + " " + resultProduct.pagination.rowCount + " sản phẩm");
@@ -151,11 +165,14 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
                 @Override
                 public void onError(String messageError) {
+                    mProgress.hideDialog();
                     mSwipe.setRefreshing(false);
                 }
             });
             fastNetworking.callApiProducts(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
         } catch (JSONException e) {
+            mProgress.hideDialog();
+            mSwipe.setRefreshing(false);
             e.printStackTrace();
         }
     }
@@ -202,12 +219,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             } else {
                 Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
                 OrderProduct orderProduct = new OrderProduct(item);
-                mListOrder.add(0,orderProduct);
+                mListOrder.add(0, orderProduct);
             }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
             OrderProduct orderProduct = new OrderProduct(item);
-            mListOrder.add(0,orderProduct);
+            mListOrder.add(0, orderProduct);
         }
         OrderLines orderLines = new OrderLines();
         orderLines.orderList = mListOrder;
@@ -226,7 +243,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mSearch = input;
         mListData.clear();
         mCurrentPage = 1;
-        callApiProducts();
+        callApiProducts(false);
     }
 
     @Override
@@ -234,7 +251,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mSearch = charSequence.toString();
         mCurrentPage = 1;
         mListData.clear();
-        callApiProducts();
+        callApiProducts(false);
     }
 
     @Override
@@ -242,6 +259,6 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mSearch = item.productName;
         mListData.clear();
         mCurrentPage = 1;
-        callApiProducts();
+        callApiProducts(false);
     }
 }

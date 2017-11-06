@@ -24,10 +24,12 @@ import bonimed.vn.MainActivity;
 import bonimed.vn.R;
 import bonimed.vn.api.FastNetworking;
 import bonimed.vn.base.BaseActivity;
+import bonimed.vn.listener.DialogOneButtonCallBackListener;
 import bonimed.vn.listener.DialogTwoButtonCallBackListener;
 import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.util.Constants;
 import bonimed.vn.util.DialogUtil;
+import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.util.Utils;
@@ -83,7 +85,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (!validateName()) {
                     return;
                 }
-                callApiLogin(mEdtUsername.getText().toString(), mEdtPassword.getText().toString());
+                if (Network.isOnline(this)) {
+                    callApiLogin(mEdtUsername.getText().toString(), mEdtPassword.getText().toString());
+                } else {
+                    DialogUtil.showAlertDialogOneButtonClicked(this, getString(R.string.title_no_connection)
+                            , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+                }
                 break;
             case R.id.tv_license_url:
                 Intent i = new Intent(Intent.ACTION_VIEW);

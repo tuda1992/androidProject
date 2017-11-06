@@ -26,7 +26,10 @@ import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.ProductsAdapter;
 import bonimed.vn.products.ResultProduct;
+import bonimed.vn.util.DialogUtil;
+import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
+import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
 import bonimed.vn.widget.SearchLayout;
 
@@ -45,6 +48,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
     private EndlessRecyclerViewScrollListener mScrollListener;
     private int mCurrentPage = 1;
     private List<OrdersList> mListData = new ArrayList<>();
+    private ProgressDialogUtils mProgress;
 
     @Override
     protected int getLayoutView() {
@@ -57,6 +61,8 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
         mRv = (RecyclerView) view.findViewById(R.id.rv_data);
         mSearchLayout = (SearchLayout) view.findViewById(R.id.search_layout);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mSearchLayout.setResourceForOrderFragment();
+        mProgress = new ProgressDialogUtils(getActivity());
     }
 
     @Override
@@ -65,7 +71,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
         mScrollListener = new EndlessRecyclerViewScrollListener(mLinearLayoutManager) {
             @Override
             public void onLoadMore(int page) {
-                callApi();
+                callApi(false);
             }
         };
 
@@ -77,7 +83,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
                 mScrollListener.resetState();
                 mListData.clear();
                 mCurrentPage = 1;
-                callApi();
+                callApi(false);
             }
         });
     }
@@ -89,7 +95,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
         mRv.setLayoutManager(mLinearLayoutManager);
         mOrdersAdapter = new OrdersAdapter(getActivity(), mListData, this);
         mRv.setAdapter(mOrdersAdapter);
-        callApi();
+        callApi(true);
     }
 
     @Override
@@ -112,7 +118,17 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
 
     }
 
-    private void callApi() {
+    private void callApi(boolean isShowProgress) {
+        if (!Network.isOnline(getActivity())) {
+            DialogUtil.showAlertDialogOneButtonClicked(getActivity(), getString(R.string.title_no_connection)
+                    , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+            return;
+        }
+
+        if (isShowProgress) {
+            mProgress.showDialog();
+        }
+
         OrdersListPost ordersListPost = new OrdersListPost();
         ordersListPost.startTime = -1;
         ordersListPost.endTime = -1;
@@ -130,6 +146,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     mSwipe.setRefreshing(false);
+                    mProgress.hideDialog();
                     ResultOrdersList resultOrdersList = mGson.fromJson(jsonObject.toString(), ResultOrdersList.class);
 
                     if (resultOrdersList.data != null && resultOrdersList.data.size() > 0) {
@@ -144,10 +161,13 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
                 @Override
                 public void onError(String messageError) {
                     mSwipe.setRefreshing(false);
+                    mProgress.hideDialog();
                 }
             });
             fastNetworking.callApiOrderList(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
         } catch (JSONException e) {
+            mSwipe.setRefreshing(false);
+            mProgress.hideDialog();
             e.printStackTrace();
         }
     }

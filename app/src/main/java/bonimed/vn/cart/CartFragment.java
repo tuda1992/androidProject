@@ -30,6 +30,7 @@ import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.Products;
 import bonimed.vn.products.ResultProduct;
 import bonimed.vn.util.DialogUtil;
+import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.Utils;
 import bonimed.vn.widget.SearchLayout;
@@ -129,7 +130,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         } else {
             mIsExist = false;
         }
-        if (!mIsExist){
+        if (!mIsExist) {
             OrderProduct orderProduct = new OrderProduct(input);
             mListData.add(orderProduct);
         }
@@ -177,6 +178,11 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_save:
+                if (!Network.isOnline(getActivity())) {
+                    DialogUtil.showAlertDialogOneButtonClicked(getActivity(), getString(R.string.title_no_connection)
+                            , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+                    return;
+                }
                 OrderLines orderLines = new OrderLines();
                 orderLines.buyerId = ((MainActivity) getActivity()).getUserId();
                 orderLines.orderList = mListData;
@@ -238,6 +244,11 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     }
 
     private void callApiProducts() {
+        if (!Network.isOnline(getActivity())) {
+            DialogUtil.showAlertDialogOneButtonClicked(getActivity(), getString(R.string.title_no_connection)
+                    , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+            return;
+        }
         Products products = new Products();
         products.pageIndex = 1;
         products.pageSize = 25;

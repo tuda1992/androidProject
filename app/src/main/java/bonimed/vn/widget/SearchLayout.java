@@ -123,4 +123,9 @@ public class SearchLayout extends BaseCustomLayout implements View.OnClickListen
         mIvSearch.setImageResource(R.drawable.ic_cart);
         mEdtInput.setHint(getResources().getString(R.string.input_text_hint_cart));
     }
+
+
+    public void setResourceForOrderFragment() {
+        mEdtInput.setHint(getResources().getString(R.string.input_text_hint_order));
+    }
 }

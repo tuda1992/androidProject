@@ -10,6 +10,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/_5sdp"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/_12sdp" />
+        android:textSize="@dimen/_10sdp" />
 
 </RelativeLayout>

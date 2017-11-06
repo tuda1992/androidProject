@@ -16,6 +16,7 @@ import java.util.List;
 
 import bonimed.vn.R;
 import bonimed.vn.products.DataProduct;
+import bonimed.vn.util.Utils;
 
 /**
  * Created by acv on 10/25/17.
@@ -56,7 +57,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<DataProduct> {
         final DataProduct customer = items.get(position);
         if (customer != null) {
             if (mNameProduct != null) {
-                mNameProduct.setText(customer.productName);
+                mNameProduct.setText(customer.productName + " | Công ty : " + customer.company + " | " + Utils.convertToCurrencyStr(customer.salePrice.intValue()));
             }
         }
         mNameProduct.setOnClickListener(new View.OnClickListener() {

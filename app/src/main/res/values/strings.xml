@@ -6,7 +6,7 @@
     <string name="nav_item_products">Danh sách sản phẩm</string>
     <string name="nav_item_cart">Giỏ hàng</string>
     <string name="nav_item_orders">Danh sách đơn hàng</string>
-    <string name="nav_item_call">Liên hệ : 098 268 5888</string>
+    <string name="nav_item_call">Liên hệ : 0973 446 447</string>
     <string name="nav_item_logout">Đăng xuất</string>
 
     <!-- navigation drawer item labels  -->
@@ -24,12 +24,13 @@
 
     <string name="input_text_hint">Nhập tên sản phẩm bạn muốn tìm</string>
     <string name="input_text_hint_cart">Nhập tên sản phẩm bạn muốn thêm vào giỏ</string>
+    <string name="input_text_hint_order">Nhập mã hoá đơn hoặc ngày mua bạn muốn tìm</string>
 
     <string name="hot_line">Hotline : 0973 446 447</string>
     <string name="welcome">Welcome</string>
 
     <string name="license_url">Bonimed.vn</string>
-    <string name="license">BẢN QUYỀN THUỘC SỞ HỮU CỦA LƯU TIẾN SỨC </string>
+    <string name="license">BẢN QUYỀN THUỘC SỞ HỮU CỦA BONIMED</string>
 
     <string name="hint_username">Tên tài khoản</string>
     <string name="hint_password">Mật khẩu</string>
@@ -72,6 +73,10 @@
     <string name="message_save_data">Bạn có muốn lưu tài khoản trên máy không?</string>
 
     <string name="order_success">Đặt hàng thành công!!!</string>
+
+    <string name="title_no_connection">Không có kết nối internet</string>
+    <string name="message_no_connection">Hãy kết nối với internet rồi thử lại</string>
+    <string name="positive_no_connection">OK</string>
 
 
 

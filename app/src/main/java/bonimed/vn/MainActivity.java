@@ -237,14 +237,14 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
             if (checkSelfPermission(android.Manifest.permission.CALL_PHONE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:0982685888"));
+                callIntent.setData(Uri.parse("tel:0973446447"));
                 startActivity(callIntent);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_ACTION);
             }
         } else { //permission is automatically granted on sdk<23 upon installation
             Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:0982685888"));
+            callIntent.setData(Uri.parse("tel:0973446447"));
             startActivity(callIntent);
         }
     }
