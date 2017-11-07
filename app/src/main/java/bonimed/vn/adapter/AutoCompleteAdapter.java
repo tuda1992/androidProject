@@ -57,7 +57,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<DataProduct> {
         final DataProduct customer = items.get(position);
         if (customer != null) {
             if (mNameProduct != null) {
-                mNameProduct.setText(customer.productName + " | Công ty : " + customer.company + " | " + Utils.convertToCurrencyStr(customer.salePrice.intValue()));
+                mNameProduct.setText(customer.productName + "  |  " + customer.company + "  |  " + Utils.convertToCurrencyStr(customer.salePrice.intValue()));
             }
         }
         mNameProduct.setOnClickListener(new View.OnClickListener() {

@@ -59,4 +59,11 @@ public abstract class BaseFragment extends Fragment {
         fm.popBackStack();
     }
 
+    protected String getResourseString(int id) {
+        if (isAdded()) {
+            return getResources().getString(id);
+        }
+        return "";
+    }
+
 }

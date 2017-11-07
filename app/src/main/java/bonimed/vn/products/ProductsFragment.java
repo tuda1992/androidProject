@@ -235,7 +235,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
 
     @Override
     public void onClickDetail(DataProduct item) {
-
+        DialogUtil.showAlertDialogOneButtonClicked(getActivity(), "", getResourseString(R.string.message_updating), getResourseString(R.string.positive_no_connection), null);
     }
 
     @Override

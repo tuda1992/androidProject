@@ -213,8 +213,11 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
             float x = ev.getRawX() + v.getLeft() - scrcoords[0];
             float y = ev.getRawY() + v.getTop() - scrcoords[1];
 
-            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()){
                 Utils.hideKeyboard(this, v);
+                v.clearFocus();
+            }
+
         }
         return super.dispatchTouchEvent(ev);
     }

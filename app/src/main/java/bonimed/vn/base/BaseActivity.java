@@ -51,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         fm.popBackStack();
     }
 
-    protected void startActivityAnim(Class activity, Bundle b) {
+    public void startActivityAnim(Class activity, Bundle b) {
         Intent i = new Intent(this, activity);
         if (b != null) {
             i.putExtras(b);

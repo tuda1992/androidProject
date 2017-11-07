@@ -21,6 +21,7 @@ import bonimed.vn.R;
 import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.OrderDataProduct;
 import bonimed.vn.util.Constants;
+import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.Utils;
 
 /**
@@ -91,8 +92,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 @Override
                 public void onFocusChange(View view, boolean b) {
                     if (!b) {
-                        if (item.quota.intValue() != 0){
+                        if (item.quota.intValue() != 0) {
                             if (item.quantity.intValue() >= item.quota.intValue()) {
+                                DialogUtil.showAlertDialogOneButtonClicked(mContext, "", mContext.getResources().getString(R.string.message_overload) + item.quota.intValue()
+                                        , mContext.getResources().getString(R.string.positive_no_connection), null);
                                 mEdtNumber.setText(item.quota.intValue() + "");
                                 if (item.salePrice != null) {
                                     mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quota.intValue() * item.salePrice.intValue()));
@@ -103,7 +106,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                                     mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
                                 }
                             }
-                        }else {
+                        } else {
                             mEdtNumber.setText(item.quantity.intValue() + "");
                         }
                         if (mItemClickCallBackListener != null)

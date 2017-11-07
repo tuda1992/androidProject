@@ -39,12 +39,13 @@ import okhttp3.Response;
 
 public class FastNetworking {
 
-//        private final String BASE_URL = "https://bonimed.vn/api/";
+    //        private final String BASE_URL = "https://bonimed.vn/api/";
     private final String BASE_URL = "https://bonimed.com.vn/api/";
     private final String URL_LOGIN = "Authenticate/Login";
     private final String URL_PRODUCTS = "Products/ListProductsPaging";
     private final String URL_ORDERS = "Orders/ListAll";
     private final String URL_ORDERS_CREATE = "Orders/Create";
+    private final String URL_DETAIL_ORDER = "Orders/OrderLinesInOrder";
 
     private Context mContext;
     private JsonObjectCallBackListener mListenerObject;
@@ -157,10 +158,32 @@ public class FastNetworking {
 
                     @Override
                     public void onError(ANError anError) {
-                        mListenerString.onError(anError.getErrorDetail().toString());
+                        if (mListenerString != null)
+                            mListenerString.onError(anError.getErrorDetail().toString());
                     }
                 });
     }
+
+    public void callApiGetDetailOrder(String token, String orderId) {
+        AndroidNetworking.get(BASE_URL + URL_DETAIL_ORDER)
+                .addQueryParameter(Constants.SECURITY_TOKEN, token)
+                .addQueryParameter(Constants.ORDER_ID, orderId)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (mListenerArray != null)
+                            mListenerArray.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        if (mListenerArray != null)
+                            mListenerArray.onError(anError.getErrorDetail().toString());
+                    }
+                });
+    }
+
 
     @NonNull
     private HashMap<String, String> initCustomHeader(String token) {

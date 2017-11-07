@@ -21,6 +21,7 @@
     <string name="title_products">Danh sách sản phẩm</string>
     <string name="title_cart">Giỏ hàng</string>
     <string name="title_orders">Danh sách đơn hàng</string>
+    <string name="title_detail_order">Chi tiết đơn hàng</string>
 
     <string name="input_text_hint">Nhập tên sản phẩm bạn muốn tìm</string>
     <string name="input_text_hint_cart">Nhập tên sản phẩm bạn muốn thêm vào giỏ</string>
@@ -78,6 +79,8 @@
     <string name="message_no_connection">Hãy kết nối với internet rồi thử lại</string>
     <string name="positive_no_connection">OK</string>
 
+    <string name="message_updating">Tính năng này sẽ cập nhật sau!!!</string>
 
+    <string name="message_overload">Chỉ có thể mua tối đa : </string>
 
 </resources>

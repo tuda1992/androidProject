@@ -1,5 +1,6 @@
 package bonimed.vn.orders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import bonimed.vn.listener.JsonObjectCallBackListener;
 import bonimed.vn.products.DataProduct;
 import bonimed.vn.products.ProductsAdapter;
 import bonimed.vn.products.ResultProduct;
+import bonimed.vn.util.Constants;
 import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
@@ -115,7 +117,9 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
 
     @Override
     public void onClickItemDetail(OrdersList item) {
-
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.ORDER_ID, item.id);
+        ((MainActivity) getActivity()).startActivityAnim(DetailOrderActivity.class, bundle);
     }
 
     private void callApi(boolean isShowProgress) {
