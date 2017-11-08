@@ -39,8 +39,8 @@ import okhttp3.Response;
 
 public class FastNetworking {
 
-    //        private final String BASE_URL = "https://bonimed.vn/api/";
-    private final String BASE_URL = "https://bonimed.com.vn/api/";
+            private final String BASE_URL = "https://bonimed.vn/api/";
+//    private final String BASE_URL = "https://bonimed.com.vn/api/";
     private final String URL_LOGIN = "Authenticate/Login";
     private final String URL_PRODUCTS = "Products/ListProductsPaging";
     private final String URL_ORDERS = "Orders/ListAll";

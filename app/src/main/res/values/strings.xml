@@ -43,8 +43,8 @@
     <string name="cancel_cart">Huỷ đơn hàng</string>
 
     <string name="product_money">Tiền hàng</string>
-    <string name="service_money">Dịch vụ</string>
-    <string name="total_money">Tổng tiền thanh toán</string>
+    <string name="service_money">Phí SHIP (Giao hàng)</string>
+    <string name="total_money">Tổng tiền tạm tính</string>
 
     <string name="code_bill">Mã hoá đơn</string>
     <string name="date_purchase">Ngày mua</string>
@@ -73,7 +73,10 @@
 
     <string name="message_save_data">Bạn có muốn lưu tài khoản trên máy không?</string>
 
-    <string name="order_success">Đặt hàng thành công!!!</string>
+    <string name="order_success">Quý khách vừa đặt đơn thành công trên hệ thống Bonimed</string>
+    <string name="order_success_1">Đơn hàng của quý khách sẽ được giao</string>
+    <string name="order_success_2">Mọi vấn đề phát sinh xin vui lòng liên lạc qua\nHotline : 0973 446 447</string>
+
 
     <string name="title_no_connection">Không có kết nối internet</string>
     <string name="message_no_connection">Hãy kết nối với internet rồi thử lại</string>

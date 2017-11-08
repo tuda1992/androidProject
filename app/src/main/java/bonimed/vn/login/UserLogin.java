@@ -108,5 +108,8 @@ public class UserLogin {
     @SerializedName("SecurityToken")
     @Expose
     public String securityToken;
+    @SerializedName("ShipFee")
+    @Expose
+    public Integer shipFee;
 
 }

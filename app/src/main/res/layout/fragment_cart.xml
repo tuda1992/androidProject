@@ -78,9 +78,9 @@
         </RelativeLayout>
 
         <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="@android:color/white" />
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" />
 
 
         <RelativeLayout
@@ -89,13 +89,13 @@
             android:layout_weight="0.3">
 
             <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Huỷ"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/_10sdp"
-            android:textStyle="bold" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Huỷ"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -127,6 +127,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/_5sdp"
                     android:text="@string/product_money"
+
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_11sdp"
                     android:textStyle="bold" />
@@ -143,6 +144,7 @@
                     android:id="@+id/tv_product_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
@@ -187,10 +189,10 @@
                     android:id="@+id/tv_service_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
-                    android:text="20,000 đ"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_11sdp"
                     android:textStyle="bold" />
@@ -232,6 +234,7 @@
                     android:id="@+id/tv_total_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"

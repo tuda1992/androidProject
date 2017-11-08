@@ -112,7 +112,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private void priceWhenNoData() {
         mTvProductMoney.setText(Utils.convertToCurrencyStr(0));
         mTvTotalMoney.setText(Utils.convertToCurrencyStr(0));
-        mTvServiceMoney.setText(Utils.convertToCurrencyStr(0));
+        mTvServiceMoney.setText(Utils.convertToCurrencyStr(((MainActivity) getActivity()).getShipFee()));
     }
 
     @Override
@@ -135,6 +135,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
             mListData.add(orderProduct);
         }
         mCartAdapter.notifyDataSetChanged();
+        updateSalePrice();
         updateTitle();
     }
 
@@ -221,20 +222,17 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                 public void onResponse(String string) {
                     Log.d("TUDA", "onResponse = " + string);
                     if (string.equalsIgnoreCase("true")) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.order_success), Toast.LENGTH_SHORT).show();
+                        DialogUtil.showAlertDialogOrderSuccessOneButtonClicked(getActivity(), null);
                         mListData.clear();
                         mCartAdapter.notifyDataSetChanged();
                         PrefManager.removeJsonObjectOrderProduct(getActivity());
                         priceWhenNoData();
                         ((MainActivity) getActivity()).setTitleForCart(0);
-                    } else {
-
                     }
                 }
 
                 @Override
                 public void onError(String messageError) {
-                    Log.d("TUDA", "onError = " + messageError);
                 }
             });
             fastNetworking.callApiUpload(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
@@ -305,9 +303,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private void updateTitle() {
         int quantity = 0;
         if (mListData.size() > 0) {
-            for (int i = 0; i < mListData.size(); i++) {
-                quantity += mListData.get(i).quantity;
-            }
+            quantity += mListData.size();
         }
         ((MainActivity) getActivity()).setTitleForCart(quantity);
     }
@@ -315,22 +311,22 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     @Override
     public void onInputQuantityChanged() {
         updateSalePrice();
-
-        updateTitle();
     }
 
     private void updateSalePrice() {
         int totalPrice = 0;
+        int shipFee = ((MainActivity) getActivity()).getShipFee();
         for (OrderProduct item : mListData) {
             totalPrice += item.quantity * item.salePrice.intValue();
         }
+
         mTvProductMoney.setText(Utils.convertToCurrencyStr(totalPrice));
-        if (totalPrice == 0) {
+        mTvServiceMoney.setText(Utils.convertToCurrencyStr(shipFee));
+
+        if (mListData.size() == 0) {
             mTvTotalMoney.setText(Utils.convertToCurrencyStr(0));
-            mTvServiceMoney.setText(Utils.convertToCurrencyStr(0));
         } else {
-            mTvTotalMoney.setText(Utils.convertToCurrencyStr(totalPrice + 20000));
-            mTvServiceMoney.setText(Utils.convertToCurrencyStr(20000));
+            mTvTotalMoney.setText(Utils.convertToCurrencyStr(totalPrice + shipFee));
         }
     }
 

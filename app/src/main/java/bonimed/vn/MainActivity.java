@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,6 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
+
+import java.util.Calendar;
 
 import bonimed.vn.base.BaseActivity;
 import bonimed.vn.cart.CartFragment;
@@ -62,6 +65,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         mDrawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
 
         displayView(0);
+
     }
 
     @Override
@@ -87,13 +91,17 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         return mUserLogin == null ? "" : mUserLogin.id;
     }
 
+    public int getShipFee() {
+        return mUserLogin == null ? 0 : mUserLogin.shipFee.intValue();
+    }
+
     @Override
     public void onDrawerItemSelected(View view, int position) {
         displayView(position);
     }
 
     private void displayView(int position) {
-        if (mCurrentTab == position && mCurrentTab!=3) {
+        if (mCurrentTab == position && mCurrentTab != 3) {
             return;
         }
         mCurrentTab = position;
@@ -113,9 +121,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
                 if (!TextUtils.isEmpty(orderProduct)) {
                     OrderLines orderLines = new Gson().fromJson(orderProduct, OrderLines.class);
                     if (orderLines != null && orderLines.orderList != null) {
-                        for (int i = 0; i < orderLines.orderList.size(); i++) {
-                            quantity += orderLines.orderList.get(i).quantity;
-                        }
+                        quantity = orderLines.orderList.size();
                     }
                 }
                 setVisibleActionSearch(false);
@@ -153,7 +159,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
         if (quantity <= 0) {
             getSupportActionBar().setTitle(getString(R.string.title_cart));
         } else {
-            getSupportActionBar().setTitle(getString(R.string.title_cart) + "( " + quantity + " sản phẩm )");
+            getSupportActionBar().setTitle(getString(R.string.title_cart) + " ( " + quantity + " loại sản phẩm ) ");
         }
     }
 
@@ -213,7 +219,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
             float x = ev.getRawX() + v.getLeft() - scrcoords[0];
             float y = ev.getRawY() + v.getTop() - scrcoords[1];
 
-            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()){
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
                 Utils.hideKeyboard(this, v);
                 v.clearFocus();
             }
@@ -226,7 +232,7 @@ public class MainActivity extends BaseActivity implements FragmentDrawer.Fragmen
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case 1: {
+            case CALL_ACTION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     callAction();
                 }

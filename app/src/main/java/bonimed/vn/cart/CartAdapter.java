@@ -86,6 +86,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             if (item.salePrice.intValue() != 0) {
                 mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
                 mTvPrice.setText("Đơn giá : " + Utils.convertToCurrencyStr(item.salePrice.intValue()));
+            }else {
+                mTvTotalPrice.setText("");
+                mTvPrice.setText("");
             }
 
             mEdtNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {

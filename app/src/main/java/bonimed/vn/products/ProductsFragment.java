@@ -83,7 +83,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             public void onRefresh() {
                 mScrollListener.resetState();
                 mCurrentPage = 1;
-                mSearch = "";
+//                mSearch = "";
                 mListData.clear();
                 callApiProducts(false);
 
