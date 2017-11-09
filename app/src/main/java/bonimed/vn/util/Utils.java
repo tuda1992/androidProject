@@ -37,7 +37,7 @@ public class Utils {
             e.printStackTrace();
         }
 
-        format = new SimpleDateFormat("dd-MM-yyyy");
+        format = new SimpleDateFormat("HH:mm  dd-MM-yyyy");
 
         return format.format(result);
     }

@@ -92,7 +92,7 @@ public class DialogUtil {
         String strTime = "";
         if (currentHour >= 14 && currentHour < 18) {
             strTime = "lúc\n10h - 13h30 ngày mai";
-        } else if (currentHour >= 18 && currentHour < 10) {
+        } else if ((currentHour >= 18 && currentHour <=24) || (currentHour >=0 && currentHour < 10)) {
             strTime = "sau 14h";
         } else if (currentHour >= 10 && currentHour < 12) {
             strTime = "sau 15h";
