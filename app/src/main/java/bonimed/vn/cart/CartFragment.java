@@ -73,7 +73,6 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         mSearchLayout = (SearchLayout) view.findViewById(R.id.search_layout);
         mSearchLayout.setResourceForBtnSearch();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
-
     }
 
     @Override

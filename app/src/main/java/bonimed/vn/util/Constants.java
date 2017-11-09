@@ -21,5 +21,7 @@ public class Constants {
 
     public static final String SECURITY_TOKEN = "securitytoken";
     public static final String ORDER_ID = "orderId";
+    public static final String SHIP_FEE = "SHIP_FEE";
+    public static final String TOTAL_PRICE = "TOTAL_PRICE";
 
 }

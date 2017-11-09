@@ -53,7 +53,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
         public void setData(OrdersList item) {
             mTvBillCode.setText(item.billCode);
             mTvBillDate.setText(Utils.convertStringDateToString(item.createdDate));
-            mTvBillMoney.setText(Utils.convertToCurrencyStr(item.totalPrice.intValue()));
+            mTvBillMoney.setText(Utils.convertToCurrencyStr(item.totalPrice.intValue() + item.shipFee.intValue()));
         }
 
         @Override

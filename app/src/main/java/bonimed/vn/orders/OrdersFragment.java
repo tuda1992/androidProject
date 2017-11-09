@@ -102,7 +102,7 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
 
     @Override
     public void OnActionSearch(String input) {
-
+        DialogUtil.showAlertDialogOneButtonClicked(getActivity(), "", getResourseString(R.string.message_updating), getResourseString(R.string.positive_no_connection), null);
     }
 
     @Override
@@ -119,6 +119,8 @@ public class OrdersFragment extends BaseFragment implements SearchLayout.SearchC
     public void onClickItemDetail(OrdersList item) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ORDER_ID, item.id);
+        bundle.putInt(Constants.TOTAL_PRICE, item.totalPrice);
+        bundle.putInt(Constants.SHIP_FEE, item.shipFee);
         ((MainActivity) getActivity()).startActivityAnim(DetailOrderActivity.class, bundle);
     }
 

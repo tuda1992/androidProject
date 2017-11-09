@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +28,7 @@ import bonimed.vn.util.DialogUtil;
 import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.ProgressDialogUtils;
+import bonimed.vn.util.Utils;
 
 /**
  * Created by acv on 11/7/17.
@@ -42,6 +44,8 @@ public class DetailOrderActivity extends BaseActivity {
     private UserLogin mUserLogin;
     private Toolbar mToolbar;
     private ProgressDialogUtils mProgress;
+    private TextView mTvProductMoney, mTvServiceMoney, mTvTotalMoney;
+    private int mShipFee, mTotalPrice;
 
     @Override
     protected int getLayoutView() {
@@ -58,6 +62,9 @@ public class DetailOrderActivity extends BaseActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.title_detail_order));
 
         mRv = (RecyclerView) findViewById(R.id.rv_data);
+        mTvProductMoney = (TextView) findViewById(R.id.tv_product_money);
+        mTvServiceMoney = (TextView) findViewById(R.id.tv_service_money);
+        mTvTotalMoney = (TextView) findViewById(R.id.tv_total_money);
         mLinearLayoutManager = new LinearLayoutManager(this);
     }
 
@@ -83,6 +90,13 @@ public class DetailOrderActivity extends BaseActivity {
         Bundle b = getIntent().getExtras();
         if (b != null) {
             String orderId = b.getString(Constants.ORDER_ID, "");
+            mShipFee = b.getInt(Constants.SHIP_FEE, 0);
+            mTotalPrice = b.getInt(Constants.TOTAL_PRICE, 0);
+
+            mTvProductMoney.setText(Utils.convertToCurrencyStr(mTotalPrice));
+            mTvServiceMoney.setText(Utils.convertToCurrencyStr(mShipFee));
+            mTvTotalMoney.setText(Utils.convertToCurrencyStr((mShipFee + mTotalPrice)));
+
             if (Network.isOnline(this)) {
                 callApi(orderId);
             } else {
