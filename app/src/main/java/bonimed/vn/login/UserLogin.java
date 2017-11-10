@@ -112,4 +112,6 @@ public class UserLogin {
     @Expose
     public Integer shipFee;
 
+    public String versionApp;
+
 }

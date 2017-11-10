@@ -1,6 +1,7 @@
 package bonimed.vn.login;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +45,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private Button mBtnSignIn;
     private TextView mTvLicenseUrl;
     private ProgressDialogUtils mProgress;
+    private UserLogin mUserLogin;
+    private Gson mGson;
+    private String mVersionApp;
+
 
     @Override
     protected int getLayoutView() {
@@ -70,7 +75,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initDatas(Bundle saveInstanceStatte) {
-        if (PrefManager.getLoginState(LoginActivity.this) == 1) {
+        String jsonUserLogin = PrefManager.getJsonObjectUserLogin(this);
+        mGson = new Gson();
+        if (!TextUtils.isEmpty(jsonUserLogin)) {
+            mUserLogin = mGson.fromJson(jsonUserLogin, UserLogin.class);
+        }
+
+        try {
+            mVersionApp = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (PrefManager.getLoginState(LoginActivity.this) == 1 && mUserLogin != null
+                && !TextUtils.isEmpty(mUserLogin.versionApp) && mUserLogin.versionApp.equalsIgnoreCase(mVersionApp)) {
             startActivityAnim(MainActivity.class, null);
             finish();
             return;
@@ -146,7 +164,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void loginSuccess(String jsonObject) {
-        PrefManager.putJsonObjectUserLogin(LoginActivity.this, jsonObject);
+        UserLogin userLogin = mGson.fromJson(jsonObject, UserLogin.class);
+        userLogin.versionApp = mVersionApp;
+
+        String json = mGson.toJson(userLogin);
+
+        PrefManager.putJsonObjectUserLogin(LoginActivity.this, json);
         startActivityAnim(MainActivity.class, null);
         finish();
     }
