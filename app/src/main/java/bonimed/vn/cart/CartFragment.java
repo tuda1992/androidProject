@@ -1,7 +1,6 @@
 package bonimed.vn.cart;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -34,7 +32,6 @@ import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.Utils;
 import bonimed.vn.widget.SearchLayout;
-import okhttp3.internal.Util;
 
 /**
  * Created by mac on 10/24/17.
@@ -47,7 +44,6 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private RelativeLayout mRlSave, mRlCancel;
     private SearchLayout mSearchLayout;
     private CartAdapter mCartAdapter;
-    //    private List<OrderDataProduct> mListData = new ArrayList<>();
     private List<OrderProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
@@ -55,6 +51,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     private Gson mGson;
     private String mSearch = "";
     private boolean mIsExist;
+    private List<OrderProduct> mListDontHavePrice = new ArrayList<>();
 
     @Override
     protected int getLayoutView() {
@@ -88,7 +85,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         mRv.setHasFixedSize(true);
         mRv.setLayoutManager(mLinearLayoutManager);
 
-        mCartAdapter = new CartAdapter(getActivity(), mListData, this);
+        mCartAdapter = new CartAdapter(getActivity(), mListData, mListDontHavePrice, this);
         mRv.setAdapter(mCartAdapter);
 
         if (!TextUtils.isEmpty(mStrOrder)) {
@@ -96,12 +93,17 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
             if (orderLines != null && orderLines.orderList != null) {
                 mListData.clear();
                 mListData.addAll(orderLines.orderList);
-                mCartAdapter.notifyDataSetChanged();
                 if (mListData.size() == 0) {
                     priceWhenNoData();
                 } else {
                     updateSalePrice();
+                    for (OrderProduct item : mListData) {
+                        if (item.productId.startsWith("ADMIN_")) {
+                            mListDontHavePrice.add(item);
+                        }
+                    }
                 }
+                mCartAdapter.notifyDataSetChanged();
             }
         } else {
             priceWhenNoData();
@@ -131,7 +133,8 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         }
         if (!mIsExist) {
             OrderProduct orderProduct = new OrderProduct(input);
-            mListData.add(orderProduct);
+            mListData.add(0, orderProduct);
+            mListDontHavePrice.add(0, orderProduct);
         }
         mCartAdapter.notifyDataSetChanged();
         updateSalePrice();
@@ -165,7 +168,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
         if (!mIsExist) {
             mIsExist = true;
             OrderProduct orderProduct = new OrderProduct(item);
-            mListData.add(orderProduct);
+            mListData.add(mListDontHavePrice.size(), orderProduct);
         }
 
         mCartAdapter.notifyDataSetChanged();
@@ -197,6 +200,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                                 public void onPositiveButtonClick() {
                                     PrefManager.removeJsonObjectOrderProduct(getActivity());
                                     mListData.clear();
+                                    mListDontHavePrice.clear();
                                     mCartAdapter.notifyDataSetChanged();
                                     priceWhenNoData();
                                     ((MainActivity) getActivity()).setTitleForCart(0);
@@ -223,6 +227,8 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                     if (string.equalsIgnoreCase("true")) {
                         DialogUtil.showAlertDialogOrderSuccessOneButtonClicked(getActivity(), null);
                         mListData.clear();
+                        mListDontHavePrice.clear();
+
                         mCartAdapter.notifyDataSetChanged();
                         PrefManager.removeJsonObjectOrderProduct(getActivity());
                         priceWhenNoData();
@@ -286,6 +292,10 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
                         @Override
                         public void onPositiveButtonClick() {
                             mListData.remove(product);
+                            if (product.productId.startsWith("ADMIN_")) {
+                                mListDontHavePrice.remove(product);
+                            }
+
                             mCartAdapter.notifyDataSetChanged();
                             updateSalePrice();
                             updateTitle();
@@ -332,7 +342,7 @@ public class CartFragment extends BaseFragment implements SearchLayout.SearchCal
     @Override
     public void onStop() {
         super.onStop();
-        if (mListData != null && mListData.size() > 0) {
+        if (mListData != null) {
             OrderLines orderLines = new OrderLines();
             orderLines.orderList = mListData;
             String orderList = mGson.toJson(orderLines);

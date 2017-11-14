@@ -123,4 +123,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         holder.setData(mResultData.get(position), position);
     }
 
+    public void notifyData(List<DataProduct> poiItemList) {
+        if (poiItemList != null) {
+            mResultData.clear();
+            mResultData.addAll(poiItemList);
+            notifyItemRangeChanged(0, poiItemList.size());
+        }
+    }
+
 }

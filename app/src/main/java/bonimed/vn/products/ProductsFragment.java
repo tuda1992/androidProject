@@ -30,6 +30,7 @@ import bonimed.vn.util.Network;
 import bonimed.vn.util.PrefManager;
 import bonimed.vn.util.ProgressDialogUtils;
 import bonimed.vn.widget.EndlessRecyclerViewScrollListener;
+import bonimed.vn.widget.HPLinearLayoutManager;
 import bonimed.vn.widget.SearchLayout;
 
 /**
@@ -43,11 +44,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
     private RecyclerView mRv;
     private TextView mTvTotal;
     private ProductsAdapter mProductsAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    private HPLinearLayoutManager mLinearLayoutManager;
     private EndlessRecyclerViewScrollListener mScrollListener;
     private List<DataProduct> mListData = new ArrayList<>();
     private ArrayList<DataProduct> mListSearch = new ArrayList<>();
     private List<OrderProduct> mListOrder = new ArrayList<>();
+    private List<OrderProduct> mListDataDontHavePrice = new ArrayList<>();
     private int mCurrentPage = 1;
     private String mSearch = "";
     private Gson mGson;
@@ -64,7 +66,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         mSwipe = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
         mRv = (RecyclerView) view.findViewById(R.id.rv_data);
         mTvTotal = (TextView) view.findViewById(R.id.tv_total);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayoutManager = new HPLinearLayoutManager(getActivity());
     }
 
     @Override
@@ -83,9 +85,9 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             public void onRefresh() {
                 mScrollListener.resetState();
                 mCurrentPage = 1;
-//                mSearch = "";
-                mListData.clear();
-                callApiProducts(false);
+//                mListData.clear();
+//                callApiProducts(false);
+                callApiProductsRefresh(false);
 
             }
         });
@@ -107,6 +109,11 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             if (orderLines != null && orderLines.orderList != null) {
                 mListOrder.clear();
                 mListOrder.addAll(orderLines.orderList);
+                for (OrderProduct item : mListOrder) {
+                    if (item.productId.startsWith("ADMIN_")) {
+                        mListDataDontHavePrice.add(item);
+                    }
+                }
             }
         }
 
@@ -177,37 +184,75 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
         }
     }
 
+    private void callApiProductsRefresh(boolean isShowProgress) {
+        if (!Network.isOnline(getActivity())) {
+            DialogUtil.showAlertDialogOneButtonClicked(getActivity(), getString(R.string.title_no_connection)
+                    , getString(R.string.message_no_connection), getString(R.string.text_positive), null);
+            return;
+        }
+
+        if (isShowProgress) {
+            mProgress.showDialog();
+        }
+
+        final Gson gson = new Gson();
+        Products products = new Products();
+        products.pageIndex = mCurrentPage;
+        products.pageSize = 25;
+        products.isSpecial = false;
+        products.productStatus = 1;
+        products.productType = 2;
+        products.searchText = mSearch;
+        final String json = gson.toJson(products);
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+
+            FastNetworking fastNetworking = new FastNetworking(getActivity(), new JsonObjectCallBackListener() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    mProgress.hideDialog();
+                    mSwipe.setRefreshing(false);
+                    ResultProduct resultProduct = gson.fromJson(jsonObject.toString(), ResultProduct.class);
+                    mTvTotal.setText(getString(R.string.text_total) + " " + resultProduct.pagination.rowCount + " sản phẩm");
+
+                    if (resultProduct.data != null && resultProduct.data.size() > 0) {
+
+                        List<DataProduct> listData = new ArrayList<>();
+
+                        if (mCurrentPage <= resultProduct.pagination.pageCount) {
+                            mCurrentPage++;
+                            for (DataProduct item : resultProduct.data) {
+                                for (OrderProduct childItem : mListOrder) {
+                                    if (item.id.equalsIgnoreCase(childItem.productId)) {
+                                        item.isChecked = true;
+                                    }
+                                }
+                                listData.add(item);
+                            }
+                            mProductsAdapter.notifyData(listData);
+                            mListSearch.clear();
+                            mListSearch.addAll(resultProduct.data);
+                            mSearchLayout.setDataForAutoComplete(mListSearch);
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(String messageError) {
+                    mProgress.hideDialog();
+                    mSwipe.setRefreshing(false);
+                }
+            });
+            fastNetworking.callApiProducts(jsonObject, ((MainActivity) getActivity()).getSecurityToken());
+        } catch (JSONException e) {
+            mProgress.hideDialog();
+            mSwipe.setRefreshing(false);
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onClickPurchase(DataProduct item) {
-
-//        OrderDataProduct itemData = null;
-//        if (mListOrder.size() > 0) {
-//            for (int i = 0; i < mListOrder.size(); i++) {
-//                if (item.id.equalsIgnoreCase(mListOrder.get(i).dataProduct.id)) {
-//                    mListOrder.get(i).orderQuantity++;
-//                    mIsExist = true;
-//                    break;
-//                } else {
-//                    mIsExist = false;
-//                }
-//            }
-//        } else {
-//            mIsExist = true;
-//            itemData = new OrderDataProduct();
-//            itemData.orderQuantity = 1;
-//            itemData.dataProduct = item;
-//            mListOrder.add(itemData);
-//        }
-//        if (!mIsExist) {
-//            itemData = new OrderDataProduct();
-//            itemData.orderQuantity = 1;
-//            itemData.dataProduct = item;
-//            mListOrder.add(itemData);
-//        }
-//        ListOrderDataProduct listOrderDataProduct = new ListOrderDataProduct();
-//        listOrderDataProduct.orderList = mListOrder;
-//        String orderList = mGson.toJson(listOrderDataProduct, ListOrderDataProduct.class);
-//        PrefManager.putJsonObjectOrderProduct(getActivity(), orderList);
         if (mListOrder.size() > 0) {
             if (!item.isChecked) {
                 Toast.makeText(getActivity(), getString(R.string.toast_remove_product), Toast.LENGTH_SHORT).show();
@@ -219,12 +264,12 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             } else {
                 Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
                 OrderProduct orderProduct = new OrderProduct(item);
-                mListOrder.add(0, orderProduct);
+                mListOrder.add(mListDataDontHavePrice.size(), orderProduct);
             }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_order_product), Toast.LENGTH_SHORT).show();
             OrderProduct orderProduct = new OrderProduct(item);
-            mListOrder.add(0, orderProduct);
+            mListOrder.add(mListDataDontHavePrice.size(), orderProduct);
         }
         OrderLines orderLines = new OrderLines();
         orderLines.orderList = mListOrder;

@@ -101,6 +101,13 @@
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ll_top"
+        android:background="@android:color/white" />
+
     <LinearLayout
         android:id="@+id/ll_info"
         android:layout_width="match_parent"
@@ -324,21 +331,14 @@
 
     </LinearLayout>
 
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-    <!--android:id="@+id/swipe"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_above="@+id/ll_info"-->
-    <!--android:layout_below="@+id/search_layout">-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_info"
-        android:layout_below="@+id/ll_top"
+        android:layout_below="@+id/view"
         android:clipToPadding="false"
         android:scrollbars="none" />
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
 
 </RelativeLayout>

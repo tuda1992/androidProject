@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bonimed.vn.R;
@@ -32,8 +33,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context mContext;
     private ItemClickCallBackListener mItemClickCallBackListener;
-    //    private List<OrderDataProduct> mResultData;
     private List<OrderProduct> mResultData;
+    private List<OrderProduct> mListDontHavePrice;
 
     public interface ItemClickCallBackListener {
         void onClickItemCancel(OrderProduct item);
@@ -41,10 +42,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         void onInputQuantityChanged();
     }
 
-    public CartAdapter(Context context, List<OrderProduct> resultData, ItemClickCallBackListener listener) {
+    public CartAdapter(Context context, List<OrderProduct> resultData, List<OrderProduct> listDontHavePrice, ItemClickCallBackListener listener) {
         this.mContext = context;
         this.mItemClickCallBackListener = listener;
         this.mResultData = resultData;
+        this.mListDontHavePrice = listDontHavePrice;
     }
 
     @Override
@@ -56,8 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         private RelativeLayout mRlCancel;
         private ImageView mIvProduct, mIvAdd, mIvRemove;
-        ;
-        private TextView mTvProductName, mTvProductUnit, mTvPrice, mTvTotalPrice;
+        private TextView mTvProductName, mTvProductUnit, mTvPrice, mTvTotalPrice, mTvTitle;
         private EditText mEdtNumber;
         private MyCustomEditTextListener mMyCustomEditTextListener;
 
@@ -72,12 +73,32 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             mIvAdd = (ImageView) v.findViewById(R.id.iv_add);
             mIvRemove = (ImageView) v.findViewById(R.id.iv_remove);
             mEdtNumber = (EditText) v.findViewById(R.id.edt_input_number);
+            mTvTitle = (TextView) v.findViewById(R.id.tv_title);
             mRlCancel.setOnClickListener(this);
             mMyCustomEditTextListener = new MyCustomEditTextListener();
             mEdtNumber.addTextChangedListener(mMyCustomEditTextListener);
         }
 
         public void setData(final OrderProduct item, final int position) {
+            if (mListDontHavePrice.size() != 0) {
+                if (position == 0) {
+                    mTvTitle.setVisibility(View.VISIBLE);
+                    mTvTitle.setText(mContext.getResources().getString(R.string.title_dont_have_price));
+                } else if (position == mListDontHavePrice.size()) {
+                    mTvTitle.setVisibility(View.VISIBLE);
+                    mTvTitle.setText(mContext.getResources().getString(R.string.title_have_price));
+                } else {
+                    mTvTitle.setVisibility(View.GONE);
+                }
+            } else {
+                if (position == 0) {
+                    mTvTitle.setVisibility(View.VISIBLE);
+                    mTvTitle.setText(mContext.getResources().getString(R.string.title_have_price));
+                } else {
+                    mTvTitle.setVisibility(View.GONE);
+                }
+            }
+
             mTvProductName.setText(item.productName);
             Picasso.with(mContext).load(Constants.URL_BONIMED + item.imageFullPath).error(R.drawable.ic_updating).into(mIvProduct);
             mTvProductUnit.setText(item.description);
@@ -86,7 +107,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             if (item.salePrice.intValue() != 0) {
                 mTvTotalPrice.setText(Utils.convertToCurrencyStr(item.quantity.intValue() * item.salePrice.intValue()));
                 mTvPrice.setText("Đơn giá : " + Utils.convertToCurrencyStr(item.salePrice.intValue()));
-            }else {
+            } else {
                 mTvTotalPrice.setText("");
                 mTvPrice.setText("");
             }

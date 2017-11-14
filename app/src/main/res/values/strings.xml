@@ -86,4 +86,7 @@
 
     <string name="message_overload">Chỉ có thể mua tối đa : </string>
 
+    <string name="title_dont_have_price">Sản phẩm giá biến động (không nhận trả lại)</string>
+    <string name="title_have_price">Sản phẩm giá ổn định</string>
+
 </resources>

@@ -1,173 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_80sdp"
+    android:layout_height="wrap_content"
     android:background="@drawable/border_bottom"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.6">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@color/colorAccent"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/_12sdp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/iv_product"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/ic_launcher" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp"
+        android:orientation="horizontal">
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6">
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9">
+            <ImageView
+                android:id="@+id/iv_product"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/ic_launcher" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_product_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_9sdp" />
+
+                <TextView
+                    android:id="@+id/tv_product_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_9sdp" />
+
+                <TextView
+                    android:id="@+id/tv_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_9sdp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_60sdp"
-            android:layout_centerInParent="true"
-            android:orientation="vertical">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_product_name"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:maxLines="2"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_9sdp" />
+            <ImageView
+                android:id="@+id/iv_remove"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_weight="0.4"
+                android:background="@drawable/effect_button"
+                android:gravity="center"
+                android:src="@drawable/ic_remove"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_15sdp" />
 
-            <TextView
-                android:id="@+id/tv_product_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_9sdp" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1" />
 
-            <TextView
-                android:id="@+id/tv_price"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+            <EditText
+                android:id="@+id/edt_input_number"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_centerInParent="true"
-                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_toLeftOf="@+id/iv_add"
+                android:layout_toRightOf="@+id/iv_remove"
+                android:layout_weight="0.8"
+                android:background="@drawable/border_black"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="3"
+                android:text="1000"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_9sdp" />
+                android:textSize="@dimen/_10sdp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1" />
+
+            <ImageView
+                android:id="@+id/iv_add"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_gravity="center"
+                android:layout_weight="0.4"
+                android:background="@drawable/effect_button"
+                android:gravity="center"
+                android:src="@drawable/ic_add"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_15sdp" />
 
         </LinearLayout>
 
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/iv_remove"
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_weight="0.4"
-            android:layout_height="@dimen/_18sdp"
-            android:layout_gravity="center"
-            android:layout_centerVertical="true"
-            android:background="@drawable/effect_button"
-            android:gravity="center"
-            android:src="@drawable/ic_remove"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/_15sdp" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.8">
 
-        <View
-            android:layout_weight="0.1"
+            <TextView
+                android:id="@+id/tv_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:maxLength="15"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_9sdp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_cancel"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="0.3">
 
-        <EditText
-            android:id="@+id/edt_input_number"
-            android:layout_width="0dp"
-            android:layout_weight="0.8"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:layout_toLeftOf="@+id/iv_add"
-            android:layout_toRightOf="@+id/iv_remove"
-            android:background="@drawable/border_black"
-            android:gravity="center"
-            android:inputType="number"
-            android:maxLength="3"
-            android:text="1000"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_10sdp" />
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/effect_button_red"
+                android:src="@drawable/ic_cancel" />
 
-        <View
-            android:layout_weight="0.1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
-
-        <ImageView
-            android:id="@+id/iv_add"
-            android:layout_width="0dp"
-            android:layout_weight="0.4"
-            android:layout_gravity="center"
-            android:layout_height="@dimen/_18sdp"
-            android:background="@drawable/effect_button"
-            android:gravity="center"
-            android:src="@drawable/ic_add"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/_15sdp" />
-
+        </RelativeLayout>
     </LinearLayout>
-
-    <!--<RelativeLayout-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="0.8">-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_price"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_centerInParent="true"-->
-    <!--android:maxLength="12"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textSize="@dimen/_9sdp" />-->
-
-    <!--</RelativeLayout>-->
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.8">
-
-        <TextView
-            android:id="@+id/tv_total_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:maxLength="15"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_9sdp" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_cancel"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.3">
-
-        <ImageView
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/effect_button_red"
-            android:src="@drawable/ic_cancel" />
-
-    </RelativeLayout>
 
 </LinearLayout>
 
