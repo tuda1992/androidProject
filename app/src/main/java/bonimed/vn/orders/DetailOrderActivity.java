@@ -118,7 +118,13 @@ public class DetailOrderActivity extends BaseActivity {
                     List<DetailOrder> list = (List<DetailOrder>) mGson.fromJson(jsonArray.toString(), listType);
                     if (list.size() > 0) {
                         mListData.clear();
-                        mListData.addAll(list);
+                        for (DetailOrder item : list) {
+                            if (item.salePrice.intValue() == 0) {
+                                mListData.add(0, item);
+                            } else {
+                                mListData.add(item);
+                            }
+                        }
                         mDetailOrderAdapter.notifyDataSetChanged();
                     }
                 }
