@@ -117,7 +117,7 @@ public class ProductsFragment extends BaseFragment implements ProductsAdapter.It
             }
         }
 
-        callApiProducts(true);
+//        callApiProducts(true);
     }
 
     private void callApiProducts(boolean isShowProgress) {
